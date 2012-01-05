@@ -1,16 +1,25 @@
 The Real Costs is a Firefox plug-in that inserts emissions data into travel related e-commerce websites.
 
-Current State:
+This project was created in 2006 by Michael Mandiberg. It was commissioned by Rhizome.org. 
+
+CONTRIBUTORS
+
+Michael Mandiberg
+P. Timon McPhearson
+Carlo Montagnino
+Evan Moran
+Sara Kladky
+
+CURRENT STATE
 
 This plugin is being rebuilt for the latest version of Firefox.
 
-History:
+HISTORY
 
-This project was created in 2006 by Michael Mandiberg. It was commissioned by Rhizome.
-The Real Costs is a greasmonkey script compiled to xpi, and it stopped working with Firefox 2.0.0.3
+The Real Costs is a Greasemonkey script compiled to xpi, and it stopped working with Firefox 2.0.0.3
 We are currently in the process of rebuilding it to make it functional again.
 
-More Info:
+MORE INFO
 
 http://TheRealCosts.com
 http://mandiberg.com
