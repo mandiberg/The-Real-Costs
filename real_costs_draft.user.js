@@ -34,7 +34,7 @@ therealcosts.com/wiki
 
 function timeFunction()
 {
-	var t=setTimeout(doMainFunction,10000);
+	var t=setTimeout(doMainFunction,15000);
 }
 
 (function () {
@@ -79,7 +79,7 @@ function timeFunction()
 //////	Begin main function
 
 function doMainFunction(){
-	//alert("Begin Main");
+	alert("Begin Main");
 	carbon = 0;
 	milesCar = 0;
 	
@@ -982,21 +982,21 @@ function getHeaderId(href){
 	headerId.priceline="tripfilter";
 	headerId.resnwa="signInLink";
 	headerId.testtherealcosts="flightSummary";      
-	headerId.ticketsairtran="progress";
+	headerId.ticketsairtran="wrapper";
 	headerId.traveltravelocity= "bungee_v1";  //////	updated 1/19/12
 	headerId.travelunited="bodymain";  //////	updated 1/16/12
 	headerId.usairways="pnlCC";
 	//headerId.cfares=10;
-	headerId.cheapoair="ctl00_ctl03_ctl00_pSorting";
+	headerId.cheapoair="Body";
 	headerId.cheaptickets="bodyWrapper";  //////	updated 1/16/12
 	headerId.suncountry=4;
 	headerId.booklufthansa="content"; //////	working in some way, complicated
-	headerId.flysaa="availability"; //////	working in some way, complicated
+	headerId.flysaa="repricing"; //////	working in some way, complicated
 	headerId.bookryanair=3;
 	//headerId.klm;
 	//headerId.flyemirates;
 	headerId.cathaypacific=3; //////	working in some way, complicated
-	headerId.airberlin=3;
+	headerId.airberlin= "page_margins";
 	headerId.wftc2etravel="container";
 	headerId.kenyaairways="tipDiv";
 	headerId.airfranceus="etapes";
@@ -1010,16 +1010,16 @@ function getHeaderId(href){
 	headerId.virginatlantic=4;     //Virgin Atlantic Airways
 	headerId.wftc1etravel=4;     //Varig AND Aerolineas Argentinas.  They use the same portal, and only 4 works for Varig.
 	headerId.bookryanair="header";     //Ryanair
-	headerId.singaporeair=3;                //Singapore Airlines
-	headerId.appshawaiianair="ctl00_ContentPlaceHolder1_pnlTrips";                      //Hawaiian Air
+	headerId.singaporeair= "pageWrapper";                //Singapore Airlines
+	headerId.appshawaiianair="scrollContainer";                      //Hawaiian Air
 	headerId.c1dspwestjet="meterSelect";        //WestJet
 	headerId.c3dspwestjet="meterSelect";        //WestJet (needs 2)
 	headerId.midwestairlines=2;                         //Midwest Airlines
-	headerId.southwest=3;                                 //Southwest airlines
+	headerId.southwest="page";                                 //Southwest airlines
 	headerId.airfranceus="etapes";     //Air France
 	headerId.aswbeiana=3;                //All Nippon Airways
 	headerId.quicktripbiz=5;     //Macair Airlines
-	headerId.bookingairasia="skylightsForm";        //Air Asia Group7
+	headerId.bookingairasia="allWrap";        //Air Asia Group7
 	headerId.travelwwte1=3;                              //Asiana Airlines (quirky moves logo)
 	headerId.philippineairlines=1;                       //Philippine Airlines (quirky - moves text in header)
 	headerId.garudaindonesia=1;                        //Garuda Indonesia
@@ -1128,50 +1128,53 @@ function getHeaderId(href){
 // an array of all valid sites
 
 function testIsValidURL(href){
-	//////	In this section, notes are on current functionality, as far as I can do
+	//////	At this point, all sites need formatting help; testing for functionality, not layout
 	//////	CBL = Check Back Later
 	var validSites = new Array
 	validSites[0] = "aa.com"; //////	header and co2	with timer 1/19/12
-	validSites[1] = "alaskair.com"; //////	neither co2 or header 1/19/12
+	validSites[1] = "alaskair.com"; //////	neither co2 or header
 	validSites[2] = "ata.com"; //////	compiles other sites CBL
 	validSites[3] = "ataairlines.com"; //////	compiles other sites CBL
 	validSites[4] = "bookaircanada.com"; //////	this site itself seems to not work CBL
-	validSites[5] = "continental.com"; //////	co2 (seems incorrect, but displaying) and header 1/19/12
-	validSites[6] = "delta.com"; //////	header (needs formatting) and some co2	|	 Updated 1/16/12
-	validSites[7] = "expedia.com"; ////// some co2 and header (needs formatting)	|	 Updated 1/16/12
-	validSites[8] = "jetblueairways.com"; //////	neither co2 or header
-	validSites[9] = "kayak.com"; //////	neither co2 or header
+	validSites[5] = "continental.com"; //////	co2 (seems incorrect, but displaying) and header
+	validSites[6] = "delta.com"; //////	header (needs formatting) and some co2 1/19/12
+	validSites[7] = "expedia.com"; ////// some co2 and header (needs formatting)	 1/19/12
+	validSites[8] = "book.jetblue.com"; //////	neither co2 or header (check URL)
+	validSites[9] = "kayak.com"; //////	neither co2 or header 1/19/12
 	validSites[10] = "midwestairlines.com"; //////	site may be broken CBL
-	validSites[11] = "orbitz.com"; ////// co2 and header (needs formatting)	|	 Updated 1/16/12
-	validSites[12] = "priceline.com"; //////	co2 but no header
+	validSites[11] = "orbitz.com"; ////// co2 and header 1/19/12
+	validSites[12] = "priceline.com"; //////	neither co2 or header (check URL)
 	validSites[13] = "res.nwa.com"; //////	this is just delta
 	validSites[14] = "test.therealcosts.com"; //////	CBL
-	validSites[15] = "tickets.airtran.com"; //////	neither co2 or header
-	validSites[16] = "travel.travelocity.com"; //////	neither co2 or header
-	validSites[17] = "travel.united.com"; ////// co2 and header (check formatting)	|	 Updated 1/16/12
-	validSites[18] = "usairways.com"; //////	neither co2 or header
-	validSites[19] = "cfares.com"; //////	neither co2 or header
-	validSites[20] = "cheapoair.com"; //////	neither co2 or header
-	validSites[21] = "cheaptickets.com"; //////	some co2 and header (needs formatting)	|	 Updated 1/16/12
-	validSites[22] = "suncountry.com"; //////	neither co2 or header
-	validSites[23] = "book.lufthansa.com"; //////	header needs to be moved, some co2 | This site is using a collection of JS utilities called Dojo to make asynchronous calls, will need to look at it more to figure it out see: http://livedocs.dojotoolkit.org/
-	validSites[24] = "flysaa.com"; ////// co2 but not header
-	validSites[25] = "book.ryanair.com"; //////	neither co2 or header
-	validSites[26] = "cathaypacific.com"; ////// header and co2 ***but*** something is wonky
-	validSites[27] = "airberlin.com"; //////	neither co2 or header
-	validSites[28] = "kenya-airways.com"; //////	neither co2 or header
-	validSites[29] = "airfranceus.com"; //////	neither co2 or header
+	validSites[15] = "tickets.airtran.com"; //////	neither co2 or header 1/19/12
+	validSites[16] = "travel.travelocity.com"; ////// co2 and header 1/19/12
+	validSites[17] = "travel.united.com"; ////// co2 and header 1/19/12
+	validSites[18] = "usairways.com"; //////	neither co2 or header 1/19/12
+	validSites[19] = "cfares.com"; //////	neither co2 or header 1/19/12
+	validSites[20] = "cheapoair.com"; //////	co2 and header 1/19/12
+	validSites[21] = "cheaptickets.com"; //////	co2 and header 1/19/12
+	validSites[22] = "suncountry.com"; //////	neither co2 or header 1/19/12
+	validSites[23] = "book.lufthansa.com"; //////	header and co2 (needs new insert div fix later) 1/19/12
+	validSites[24] = "flysaa.com"; ////// co2 but not header(not by id) 1/19/12
+	validSites[25] = "bookryanair.com"; //////	neither co2 or header (this site will need some extra attention) 1/19/12
+	validSites[26] = "book.cathaypacific.com"; //////	neither co2 or header (this site will need some extra attention) 1/19/12
+	validSites[27] = "airberlin.com"; //////	header but no co2 1/19/12
+	validSites[28] = "kenya-airways.com"; //////	neither co2 or header 1/19/12
+	validSites[29] = "airfranceus.com"; //////	neither co2 or header 1/19/12
 	validSites[30] = "aswbeiana.com"; ////// I don't think this site exists anymore
-	validSites[31] = "virginatlantic.com"; //////	neither co2 or header
-	validSites[32] = "singaporeair.com"; ////// site is under maintenece when I checked, CBL
-	validSites[33] = "apps.haiwaiianair.com"; //////	neither co2 or header
+	validSites[31] = "virgin-atlantic.com"; //////	neither co2 or header
+	validSites[32] = "singaporeair.com"; ////// co2 and header, but header needs some serious work 1/19/12
+	validSites[33] = "apps.hawaiianair.com"; //////	neither co2 or header
 	validSites[34] = "midwestairlines.com"; //////points to frontier airlines
-	validSites[35] = "southwestairlines.com"; //////	neither co2 or header
+	validSites[35] = "southwest.com"; //////	co2 and header 1/19/12
 	validSites[36] = "quicktrip.com"; //////	neither co2 or header
-	validSites[37] = "booking.airasia.com"; //////	some co2 but no header | no headerid?
+	validSites[37] = "booking.airasia.com"; //////	co2 and header 1/19/12
 	validSites[38] = "onlinebooking.philippineairlines.com"; //////	neither co2 or header
 	validSites[39] = "ibb.garuda-indonesia.com"; //////	neither co2 or header
-	validSites[40] = "booking.elal.com"; ////// CBL, something funny might be going on with the url
+	
+	//////	after this things did not work in the origional
+	
+	validSites[40] = "fly.elal.co.il"; ////// CBL, something funny might be going on with the url
 	validSites[41] = "flyemirites.com"; ////// CBL, this site is weird
 	validSites[42] = "airberlin.com"; ////// repeat from line 1150
 	validSites[43] = "iberia.com"; //////	neither co2 or header
