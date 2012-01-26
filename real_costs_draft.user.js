@@ -32,9 +32,9 @@ therealcosts.com/wiki
 
 //////	Begin check if the website is compatable
 
-function timeFunction()
+function timeFunction() ////// re-write: check for airport codes, wait 5 sec, etc
 {
-	var t=setTimeout(doMainFunction,15000);
+	var t=setTimeout(doMainFunction,10000);
 }
 
 (function () {
@@ -966,27 +966,27 @@ function getHeaderId(href){
 	
 	//////	this is info hard coded from looking at the source code of these sites and acertaining where the header should go
 	headerId.aa="aa-lang-en"; //////	updated 1/16/12
-	//headerId.alaskaair= "FormUserControl_avl__lowFarePanel";
+	headerId.alaskaair= "myAccount";
 	headerId.ata="pricingSpan";
 	headerId.ataairlines="pricingSpan";
 	headerId.bookaircanada="business";
 	headerId.continental= "ctl00_bodyMain";
 	headerId.delta="booking"; //////	updated 1/16/12
 	headerId.expedia="xp-hdr"; //////	updated 1/16/12
-	headerId.jetblueairways=9;
+	headerId.bookjetblue="content";
 	headerId.flsdoubleclick="why am i getting an error on jet blue with this url";
 	//headerId.jetblueairways="header";
 	//headerId.kayak="headerspace";
 	//headerId.midwestairlines="Table18";
 	headerId.orbitz="dialog";  //////	updated 1/16/12
-	headerId.priceline="tripfilter";
+	headerId.travelcpriceline="skip";
 	headerId.resnwa="signInLink";
 	headerId.testtherealcosts="flightSummary";      
 	headerId.ticketsairtran="wrapper";
 	headerId.traveltravelocity= "bungee_v1";  //////	updated 1/19/12
 	headerId.travelunited="bodymain";  //////	updated 1/16/12
-	headerId.usairways="pnlCC";
-	//headerId.cfares=10;
+	headerId.shoppingusairways="ctl00_MainBody";
+	headerId.cfares="cfareHomePage";
 	headerId.cheapoair="Body";
 	headerId.cheaptickets="bodyWrapper";  //////	updated 1/16/12
 	headerId.suncountry=4;
@@ -995,21 +995,21 @@ function getHeaderId(href){
 	headerId.bookryanair=3;
 	//headerId.klm;
 	//headerId.flyemirates;
-	headerId.cathaypacific=3; //////	working in some way, complicated
+	headerId.bookcathaypacific="mainTabContent1"; 
 	headerId.airberlin= "page_margins";
 	headerId.wftc2etravel="container";
-	headerId.kenyaairways="tipDiv";
-	headerId.airfranceus="etapes";
+	headerId.kenyaairways="kq_main_header";
+	headerId.airfranceus="idStandardUpsellPage";
 	headerId.aswbeiana=3;
-	headerId.wftc1etravel="fare_divNavMenuId";
+	headerId.wftc3etravel="sdai";
 
 
 
 	headerId.tpeweb02chinaairlines=3;     //China Airlines
 	headerId.itn=15;    //Gulf Air
-	headerId.virginatlantic=4;     //Virgin Atlantic Airways
+	headerId.virginatlantic="pageBorder";     //Virgin Atlantic Airways
 	headerId.wftc1etravel=4;     //Varig AND Aerolineas Argentinas.  They use the same portal, and only 4 works for Varig.
-	headerId.bookryanair="header";     //Ryanair
+	//headerId.bookryanair="header";     //Ryanair
 	headerId.singaporeair= "pageWrapper";                //Singapore Airlines
 	headerId.appshawaiianair="scrollContainer";                      //Hawaiian Air
 	headerId.c1dspwestjet="meterSelect";        //WestJet
@@ -1018,10 +1018,10 @@ function getHeaderId(href){
 	headerId.southwest="page";                                 //Southwest airlines
 	headerId.airfranceus="etapes";     //Air France
 	headerId.aswbeiana=3;                //All Nippon Airways
-	headerId.quicktripbiz=5;     //Macair Airlines
+	headerId.quicktrip="lang-en";     //Macair Airlines
 	headerId.bookingairasia="allWrap";        //Air Asia Group7
 	headerId.travelwwte1=3;                              //Asiana Airlines (quirky moves logo)
-	headerId.philippineairlines=1;                       //Philippine Airlines (quirky - moves text in header)
+	headerId.onlinebookingphilippineairlines="contentwrapper";                       //Philippine Airlines (quirky - moves text in header)
 	headerId.garudaindonesia=1;                        //Garuda Indonesia
 	
 	headerId.itn=5;     //Cyprus Airways      
@@ -1132,45 +1132,45 @@ function testIsValidURL(href){
 	//////	CBL = Check Back Later
 	var validSites = new Array
 	validSites[0] = "aa.com"; //////	header and co2	with timer 1/19/12
-	validSites[1] = "alaskair.com"; //////	neither co2 or header
+	validSites[1] = "alaskaair.com"; //////	co2 and header (needs to be fixed) 1/26/12
 	validSites[2] = "ata.com"; //////	compiles other sites CBL
 	validSites[3] = "ataairlines.com"; //////	compiles other sites CBL
 	validSites[4] = "bookaircanada.com"; //////	this site itself seems to not work CBL
 	validSites[5] = "continental.com"; //////	co2 (seems incorrect, but displaying) and header
 	validSites[6] = "delta.com"; //////	header (needs formatting) and some co2 1/19/12
 	validSites[7] = "expedia.com"; ////// some co2 and header (needs formatting)	 1/19/12
-	validSites[8] = "book.jetblue.com"; //////	neither co2 or header (check URL)
+	validSites[8] = "book.jetblue.com"; //////	co2 and header 1/26/12
 	validSites[9] = "kayak.com"; //////	neither co2 or header 1/19/12
 	validSites[10] = "midwestairlines.com"; //////	site may be broken CBL
 	validSites[11] = "orbitz.com"; ////// co2 and header 1/19/12
-	validSites[12] = "priceline.com"; //////	neither co2 or header (check URL)
+	validSites[12] = "travelc.priceline.com"; //////	co2 and header  1/26/12
 	validSites[13] = "res.nwa.com"; //////	this is just delta
 	validSites[14] = "test.therealcosts.com"; //////	CBL
 	validSites[15] = "tickets.airtran.com"; //////	neither co2 or header 1/19/12
 	validSites[16] = "travel.travelocity.com"; ////// co2 and header 1/19/12
 	validSites[17] = "travel.united.com"; ////// co2 and header 1/19/12
-	validSites[18] = "usairways.com"; //////	neither co2 or header 1/19/12
-	validSites[19] = "cfares.com"; //////	neither co2 or header 1/19/12
+	validSites[18] = "shopping.usairways.com"; //////	co2 and header  1/26/12
+	validSites[19] = "cfares.com"; //////	co2 and header  1/26/12
 	validSites[20] = "cheapoair.com"; //////	co2 and header 1/19/12
 	validSites[21] = "cheaptickets.com"; //////	co2 and header 1/19/12
 	validSites[22] = "suncountry.com"; //////	neither co2 or header 1/19/12
 	validSites[23] = "book.lufthansa.com"; //////	header and co2 (needs new insert div fix later) 1/19/12
 	validSites[24] = "flysaa.com"; ////// co2 but not header(not by id) 1/19/12
 	validSites[25] = "bookryanair.com"; //////	neither co2 or header (this site will need some extra attention) 1/19/12
-	validSites[26] = "book.cathaypacific.com"; //////	neither co2 or header (this site will need some extra attention) 1/19/12
+	validSites[26] = "book.cathaypacific.com"; //////	co2 but no header  1/26/12
 	validSites[27] = "airberlin.com"; //////	header but no co2 1/19/12
 	validSites[28] = "kenya-airways.com"; //////	neither co2 or header 1/19/12
-	validSites[29] = "airfranceus.com"; //////	neither co2 or header 1/19/12
+	validSites[29] = "airfrance.us"; //////	co2 but no header  1/26/12
 	validSites[30] = "aswbeiana.com"; ////// I don't think this site exists anymore
-	validSites[31] = "virgin-atlantic.com"; //////	neither co2 or header
+	validSites[31] = "virgin-atlantic.com"; //////	co2 and header 1/26/12
 	validSites[32] = "singaporeair.com"; ////// co2 and header, but header needs some serious work 1/19/12
-	validSites[33] = "apps.hawaiianair.com"; //////	neither co2 or header
+	validSites[33] = "apps.hawaiianair.com"; //////	co2 and header 1/26/12
 	validSites[34] = "midwestairlines.com"; //////points to frontier airlines
 	validSites[35] = "southwest.com"; //////	co2 and header 1/19/12
 	validSites[36] = "quicktrip.com"; //////	neither co2 or header
 	validSites[37] = "booking.airasia.com"; //////	co2 and header 1/19/12
-	validSites[38] = "onlinebooking.philippineairlines.com"; //////	neither co2 or header
-	validSites[39] = "ibb.garuda-indonesia.com"; //////	neither co2 or header
+	validSites[38] = "onlinebooking.philippineairlines.com"; //////	co2 but no header 1/26/12
+	validSites[39] = "wftc3.e-travel.com"; //////	co2 and header 1/26/12
 	
 	//////	after this things did not work in the origional
 	
