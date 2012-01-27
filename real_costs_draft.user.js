@@ -34,7 +34,7 @@ therealcosts.com/wiki
 
 function timeFunction() ////// re-write: check for airport codes, wait 5 sec, etc
 {
-	var t=setTimeout(doMainFunction,10000);
+	var t=setTimeout(doMainFunction,10000);//////	after pageload, waits 10 secs and then does the main function
 }
 
 (function () {
@@ -79,7 +79,7 @@ function timeFunction() ////// re-write: check for airport codes, wait 5 sec, et
 //////	Begin main function
 
 function doMainFunction(){
-	alert("Begin Main");
+	//alert("Begin Main");
 	carbon = 0;
 	milesCar = 0;
 	
@@ -211,9 +211,9 @@ function doMainFunction(){
 					var a = document.createElement("span");
 					a.appendChild(document.createTextNode(match[0]));
 					span.appendChild(a);
-					var code = match[0];
+					var code = match[0]; //////	sets var code to be the matched three letter string from the node
 				   
-					if (getAirportLoc(code) &&     bumpcounter == false){
+					if (getAirportLoc(code) &&     bumpcounter == false){ //////	if the code from the node is in the airportloc array:
 						originFound = doAir(originFound, code, span, href);
 						codeFound = true;
 						if(GM_getValue("justCarbon") == 1){
@@ -976,9 +976,9 @@ function getHeaderId(href){
 	headerId.bookjetblue="content";
 	headerId.flsdoubleclick="why am i getting an error on jet blue with this url";
 	//headerId.jetblueairways="header";
-	//headerId.kayak="headerspace";
+	headerId.kayak="header";
 	//headerId.midwestairlines="Table18";
-	headerId.orbitz="dialog";  //////	updated 1/16/12
+	headerId.orbitz="resultsThreeColumn";  //////	updated 1/16/12
 	headerId.travelcpriceline="skip";
 	headerId.resnwa="signInLink";
 	headerId.testtherealcosts="flightSummary";      
@@ -990,7 +990,7 @@ function getHeaderId(href){
 	headerId.cheapoair="Body";
 	headerId.cheaptickets="bodyWrapper";  //////	updated 1/16/12
 	headerId.suncountry=4;
-	headerId.booklufthansa="content"; //////	working in some way, complicated
+	headerId.booklufthansa="top";
 	headerId.flysaa="repricing"; //////	working in some way, complicated
 	headerId.bookryanair=3;
 	//headerId.klm;
@@ -1021,7 +1021,7 @@ function getHeaderId(href){
 	headerId.quicktrip="lang-en";     //Macair Airlines
 	headerId.bookingairasia="allWrap";        //Air Asia Group7
 	headerId.travelwwte1=3;                              //Asiana Airlines (quirky moves logo)
-	headerId.onlinebookingphilippineairlines="contentwrapper";                       //Philippine Airlines (quirky - moves text in header)
+	headerId.onlinebookingphilippineairlines="maincontainer";                       //Philippine Airlines (quirky - moves text in header)
 	headerId.garudaindonesia=1;                        //Garuda Indonesia
 	
 	headerId.itn=5;     //Cyprus Airways      
@@ -1131,46 +1131,46 @@ function testIsValidURL(href){
 	//////	At this point, all sites need formatting help; testing for functionality, not layout
 	//////	CBL = Check Back Later
 	var validSites = new Array
-	validSites[0] = "aa.com"; //////	header and co2	with timer 1/19/12
-	validSites[1] = "alaskaair.com"; //////	co2 and header (needs to be fixed) 1/26/12
+	validSites[0] = "aa.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
+	validSites[1] = "alaskaair.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
 	validSites[2] = "ata.com"; //////	compiles other sites CBL
 	validSites[3] = "ataairlines.com"; //////	compiles other sites CBL
 	validSites[4] = "bookaircanada.com"; //////	this site itself seems to not work CBL
-	validSites[5] = "continental.com"; //////	co2 (seems incorrect, but displaying) and header
-	validSites[6] = "delta.com"; //////	header (needs formatting) and some co2 1/19/12
-	validSites[7] = "expedia.com"; ////// some co2 and header (needs formatting)	 1/19/12
-	validSites[8] = "book.jetblue.com"; //////	co2 and header 1/26/12
-	validSites[9] = "kayak.com"; //////	neither co2 or header 1/19/12
+	validSites[5] = "continental.com"; //////	co2 (no problems) and header (font problem?)  timer needed aprox: 5 sec 1/27/12
+	validSites[6] = "delta.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 15 sec 1/27/12
+	validSites[7] = "expedia.com"; ////// co2 (Problem code 1) and header (font alignment?)	 timer needed aprox: 5 sec 1/27/12
+	validSites[8] = "book.jetblue.com"; //////	co2 (Problem code 2) and header (no problems)	 timer needed aprox: 5 sec 1/27/12
+	validSites[9] = "kayak.com"; //////	neither co2 or header 1/27/12
 	validSites[10] = "midwestairlines.com"; //////	site may be broken CBL
-	validSites[11] = "orbitz.com"; ////// co2 and header 1/19/12
-	validSites[12] = "travelc.priceline.com"; //////	co2 and header  1/26/12
+	validSites[11] = "orbitz.com"; ////// co2 (no problem) and header (font?) timer needed aprox: 5 sec 1/27/12
+	validSites[12] = "travelc.priceline.com"; //////	co2 (Problem code: 3) and header (text alignment?) timer needed aprox: 5 sec 1/27/12
 	validSites[13] = "res.nwa.com"; //////	this is just delta
 	validSites[14] = "test.therealcosts.com"; //////	CBL
-	validSites[15] = "tickets.airtran.com"; //////	neither co2 or header 1/19/12
-	validSites[16] = "travel.travelocity.com"; ////// co2 and header 1/19/12
-	validSites[17] = "travel.united.com"; ////// co2 and header 1/19/12
-	validSites[18] = "shopping.usairways.com"; //////	co2 and header  1/26/12
-	validSites[19] = "cfares.com"; //////	co2 and header  1/26/12
-	validSites[20] = "cheapoair.com"; //////	co2 and header 1/19/12
-	validSites[21] = "cheaptickets.com"; //////	co2 and header 1/19/12
-	validSites[22] = "suncountry.com"; //////	neither co2 or header 1/19/12
-	validSites[23] = "book.lufthansa.com"; //////	header and co2 (needs new insert div fix later) 1/19/12
-	validSites[24] = "flysaa.com"; ////// co2 but not header(not by id) 1/19/12
+	validSites[15] = "tickets.airtran.com"; //////	co2 (no problem) or header (some text weirness)  timer needed aprox: 5 sec 1/27/12
+	validSites[16] = "travel.travelocity.com"; ////// co2 (no problem) and header (no problem) timer needed aprox: 10 sec 1/27/12
+	validSites[17] = "travel.united.com"; ////// co2 (needs formating) and header (no problem)  timer needed aprox: 5 sec 1/27/12
+	validSites[18] = "shopping.usairways.com"; //////	co2 (no problem) and header (font)  timer needed aprox: 5 sec 1/27/12
+	validSites[19] = "cfares.com"; //////	co2 (no problem) and header (text alignment) timer needed aprox: 15 sec 1/27/12
+	validSites[20] = "cheapoair.com"; //////	co2 (Problem code 1) and header (font?) timer needed aprox: 10 sec 1/27/12
+	validSites[21] = "cheaptickets.com"; //////	co2 (no problem) and header (no problem) timer needed aprox: 15 sec 1/27/12
+	validSites[22] = "suncountry.com"; //////	no airport codes, neither co2 or header 1/19/12
+	validSites[23] = "book.lufthansa.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[24] = "flysaa.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
 	validSites[25] = "bookryanair.com"; //////	neither co2 or header (this site will need some extra attention) 1/19/12
-	validSites[26] = "book.cathaypacific.com"; //////	co2 but no header  1/26/12
-	validSites[27] = "airberlin.com"; //////	header but no co2 1/19/12
+	validSites[26] = "book.cathaypacific.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[27] = "airberlin.com"; //////	header (text alignment) but no co2 (no three letter codes that can be edited) timer needed aprox: 5 sec 1/27/12
 	validSites[28] = "kenya-airways.com"; //////	neither co2 or header 1/19/12
-	validSites[29] = "airfrance.us"; //////	co2 but no header  1/26/12
+	validSites[29] = "airfrance.us"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
 	validSites[30] = "aswbeiana.com"; ////// I don't think this site exists anymore
-	validSites[31] = "virgin-atlantic.com"; //////	co2 and header 1/26/12
-	validSites[32] = "singaporeair.com"; ////// co2 and header, but header needs some serious work 1/19/12
-	validSites[33] = "apps.hawaiianair.com"; //////	co2 and header 1/26/12
+	validSites[31] = "virgin-atlantic.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
+	validSites[32] = "singaporeair.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[33] = "apps.hawaiianair.com"; //////	co2 (no problems) and header (needs a bottom margin) timer needed aprox: 5 sec 1/27/12
 	validSites[34] = "midwestairlines.com"; //////points to frontier airlines
-	validSites[35] = "southwest.com"; //////	co2 and header 1/19/12
+	validSites[35] = "southwest.com"; //////	some co2 no header 
 	validSites[36] = "quicktrip.com"; //////	neither co2 or header
-	validSites[37] = "booking.airasia.com"; //////	co2 and header 1/19/12
-	validSites[38] = "onlinebooking.philippineairlines.com"; //////	co2 but no header 1/26/12
-	validSites[39] = "wftc3.e-travel.com"; //////	co2 and header 1/26/12
+	validSites[37] = "booking.airasia.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
+	validSites[38] = "onlinebooking.philippineairlines.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[39] = "wftc3.e-travel.com"; //////	co2 (no problems) and header (font problem?)  timer needed aprox: 5 sec 1/27/12
 	
 	//////	after this things did not work in the origional
 	
@@ -1275,14 +1275,14 @@ function doAir(originFound, code, span, href){
 				destin3 = code;
 			} 
 		
-			
+			//////	I bet the problems are coming from the process of setting origin/destination, since the math after those variables are set should not have changed
 			if (originFound == false){
        			var origin = code;
 				GM_setValue("origin", origin);
 				if('start' == GM_getValue("gmOrigin")){
 					GM_setValue("gmOrigin", origin);
 				}
-      			originFound = true; 
+      			originFound = true; //////	basically, it seems like the process is find a code > if there is no origin code set, then call the code the origin > if there is a origin code set, call the code the destination. 
      		} else if (originFound == true) {
       			var destin = code;
 				//onlyOneDestin = destin;
@@ -1294,7 +1294,7 @@ function doAir(originFound, code, span, href){
 				
 			
 				if (href == "jetblueairways.com"){
-					
+					//////	I think this if clause is junk
 	            	var parenSpan = document.createElement("span");
     	        	parenSpan.appendChild(document.createTextNode(') '));
     	        	span.appendChild(parenSpan);
@@ -3297,7 +3297,7 @@ l.SCK="37.88:-121.23";
 l.SBY="38.33:-75.5";
 l.SBO="32.6:-82.36";
 l.SAV="32.11:-81.2";
-l.SAT="29.53:-98.4599";
+//l.SAT="29.53:-98.4599";
 l.SAN="32.7299:-117.18";
 l.SAF="35.61:-106.08";
 l.SAC="38.5:-121.48";
@@ -3450,7 +3450,7 @@ l.LAN="42.76:-84.58";
 l.JFK="40.63:-73.76";
 l.JBR="35.81:-90.63";
 l.JAX="30.48:-81.68";
-l.JAN="32.3:-90.06";
+//l.JAN="32.3:-90.06";
 l.ISP="40.78:-73.1";
 l.ISN="48.1599:-103.63";
 l.IPT="41.2299:-76.91";
@@ -3518,7 +3518,7 @@ l.FTW="32.81:-97.35";
 l.FTK="37.9:-85.9599";
 l.FSM="35.33:-94.36";
 l.FSI="34.63:-98.4";
-l.FRI="39.05:-96.75";
+//l.FRI="39.05:-96.75";
 l.FOK="40.83:-72.61";
 l.FOE="38.95:-95.65";
 l.FOD="42.55:-94.18";
@@ -4561,7 +4561,7 @@ l.HZK="65.95:-17.41";
 l.HFN="64.28:-15.21";
 l.EGS="65.28:-14.4";
 l.AEY="65.65:-18.06";
-l.THU="76.51:-68.7";
+//l.THU="76.51:-68.7";
 l.SFJ="67.01:-50.68";
 l.KUS="65.58:-37.15";
 l.JAV="69.23:-51.06";
