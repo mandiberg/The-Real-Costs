@@ -23,3 +23,21 @@ MORE INFO
 
 http://TheRealCosts.com
 http://mandiberg.com
+
+CURRENT VERSION INFO
+
+The current version of The Real Costs has been updated to add a fixed position header bar to airline websites
+The plugin runs best on these sites:
+	aa.com
+	alaskaair.com
+	continental.com
+	delta.com
+	orbitz.com
+	flysaa.com
+	cathaypacific.com
+	airfrance.us
+	singaporeair.com
+	southwest.com
+	
+Known Bugs:
+	Many sites (either completely or partially) do not work with our current method of working around AJAX content

@@ -22,64 +22,39 @@
 
 /*
 
-dev notes
+See the github repo of this project at:
+https://github.com/mandiberg/The-Real-Costs
 
-please see the wiki for the dev notes
-
-therealcosts.com/wiki
+This is the current working version of The Real Costs
+For version information such as:
+	-A list of websites are currently compatible with the script
+	-Known bugs
+	-Information about the project
+Go to this project's readme file at:
+https://github.com/mandiberg/The-Real-Costs/blob/master/README
 
 */
 
-//////	Begin check if the website is compatable
-
-function timeFunction() ////// re-write: check for airport codes, wait 5 sec, etc
-{
-	var t=setTimeout(doMainFunction,10000);//////	after pageload, waits 10 secs and then does the main function
-}
-
-(function () {
-	
-	//data for URL check. strip www from life URLs
-	
+(function () {	
+//pulling in data to check if URL is one that we can use, and then running the main function if it is:
 	var href = window.location.host; 
-	// window.location.host returns the hostname and port ie: www.something.com
+	var path = window.location.pathname; 
 	
-	var path = window.location.pathname;
-	// window.location.pathname returns all the info after the hostname and port ie: www.something.com/somefolder/somefile.html would return /somefolder/somefile.html 
-	// (Also IDK if this is actually being used in this code)
-	
-	href = href.replace ("www.", "");
-	//path = path.replace ("/", "");
-	
+	href = href.replace ("www.", ""); 
 	href_path = window.location;
 	
-	issValidURL = testIsValidURL(href);
-	
-	
-	
+	issValidURL = testIsValidURL(href); 
+		
 	if(href == "google.com" && path == "/local"){
-	//	alert(href);
-		
-		//href == maps.yahoo.com)
-	//if(getHeaderIdCar(href) != 'notcar'){
-		
-	//}
-	
 	} else if (issValidURL == true) {	
-		//alert(issValidURL);
-		timeFunction();
-	} else {
-		
-		
+		doMainFunction();
 	}
 })();
 
-//////	End check for site compatability
-
-//////	Begin main function
+//End check for site compatability
+//Begin main function
 
 function doMainFunction(){
-	//alert("Begin Main");
 	carbon = 0;
 	milesCar = 0;
 	
@@ -87,15 +62,10 @@ function doMainFunction(){
 	addGlobalStyle("#rcWhole{display:none;}#containerHalf{display:block;}");
 	addGlobalStyle(".offerwrap{display:none;important!}");
 	
-	//////	 Begin expand/contract code - this needs to be rebuilt w/ event listeners
-	
+	//Expand/Contract code - not relevant to current version since current header no longer is designed to expand
 	var expand = "function expand() {document.getElementById('rcWhole').style.display='block'; document.getElementById('containerHalf').style.display='none';document.cookie = 'realcostsExpand=expand; path=/';}";
-	
 	var contract = "function contract() {document.getElementById('containerHalf').style.display='block'; document.getElementById('rcWhole').style.display='none';document.cookie = 'realcostsExpand=contract; path=/';}";
-	
-	
-	var contractCarbonInfo = "function contractCarbonInfo() { document.getElementById('carboninfo').style.display='none';}";
-	
+	var contractCarbonInfo = "function contractCarbonInfo() { document.getElementById('carboninfo').style.display='none';}";	
 	var contractAllDivs = "function contractAllDivs() { document.getElementById('carboninfo').style.display='none';document.getElementById('businfo').style.display='none';document.getElementById('carpoolinfo').style.display='none';document.getElementById('bikeinfo').style.display='none';}";
 	addScript(contractAllDivs);
 	
@@ -116,21 +86,17 @@ function doMainFunction(){
 	addScript(expandCar);
 	
 	var contractDiv = "function contractDiv() {alert(theDiv);document.getElementById('carboninfo').style.display='none';}";
-	
-	
 	var contractDivVar = "function contractDivVar(theDiv) {alert(theDiv);document.getElementById('theDiv').style.display='none';}";
-	
 	// store 'mileage' in div/span. hiddenMiles get element value, parse int for 'car' and 'mileage'.  dividie and add into 'num'
 	//carRate = 1/mpg * 23.6; // 23.6 lbs/gallon 
-	
 	var changeCarbon = "function changeCarbon() { carMpg = document.getElementById('car').innerHTML; thisTrip = document.getElementById('hiddenMiles').innerHTML; newCarbon = Math.ceil(10 * thisTrip * 1/carMpg * 23.6)/10; document.getElementById('num').innerHTML = newCarbon; document.getElementById('smallMpg').innerHTML = carMpg;}";
 	addScript(changeCarbon);
 	
 	addScript(expand);
 	addScript(contract);
 	
-	//////	End expand/contract code
-	//////	Begin setup of regex/xpath
+	//	End expand/contract code
+	//	Begin setup of regex/xpath
 	
 	// version needs to be changed for every major version change for pop up //
 	version = '0.0.7.2';
@@ -142,7 +108,6 @@ function doMainFunction(){
 	const ParenRegex = /\b\([A-Z][A-Z][A-Z]\)\b/g;
 	const CodesRegex = /\b[A-Z][A-Z][A-Z]\b/g;
 	const MilesRegex = /\d*,?\d+.?\d* ?miles?\b/ig;
-
 
 	//data for URL check. strip www from life URLs
 	var href = window.location.host;
@@ -165,8 +130,6 @@ function doMainFunction(){
 
 	var candidates = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
-
-
 	//declaration of global variables -- initial states
 	originFound = new Boolean(false);
 	justCarbon = 0;
@@ -181,21 +144,19 @@ function doMainFunction(){
 	GM_setValue("gmDestin", gmDestin);
 	bumpcounter = false;
 	
-	//////	End setup of regex/xpath
-	
+	//	End setup of regex/xpath
 	// script will branch here and deal w/ the diff typs of calculations
-	//////	Begin air travel section
+	//	Begin air travel section
 	
-	if(getHeaderId(href) != 'notair'){
-	
-		//////	Begin to do the air calcs
-		
+	function doAirFunctions() { 
+	//this function checks through all the nodes of the document and does functions each time it finds a reg ex match
 		for (var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++) {
 			// begin airplane mileage tracking
 			if ( ParenRegex.test(cand.nodeValue)) {  // is this code junk?
 		 
 			}// is this code junk?
 			if (CodesRegex.test(cand.nodeValue)) {
+				//	 first we make a new span tag, store the value of the node that has the code in it, and then replace the node with our new span tag.
 				var span = document.createElement("span");
 				var source = cand.nodeValue;
 				cand.parentNode.replaceChild(span, cand);
@@ -207,13 +168,15 @@ function doMainFunction(){
 				for (var match = null, lastLastIndex = 0; (match = CodesRegex.exec(source)); ) {
 					//puts everything before the regex'd value back into the span
 					span.appendChild(document.createTextNode(source.substring(lastLastIndex, match.index)));
-					 // puts the regex'd value back into the span
+					//	This makes a new textnode inside of of the new span that has everything from the character at index 0 to the character at the index before the regex match
+					
+					// puts the regex'd value back into the span
 					var a = document.createElement("span");
 					a.appendChild(document.createTextNode(match[0]));
 					span.appendChild(a);
-					var code = match[0]; //////	sets var code to be the matched three letter string from the node
+					var code = match[0]; //	sets var code to be the matched three letter string from the node
 				   
-					if (getAirportLoc(code) &&     bumpcounter == false){ //////	if the code from the node is in the airportloc array:
+					if (getAirportLoc(code) &&     bumpcounter == false){ //	if the code from the node is in the airportloc array:
 						originFound = doAir(originFound, code, span, href);
 						codeFound = true;
 						if(GM_getValue("justCarbon") == 1){
@@ -230,18 +193,43 @@ function doMainFunction(){
 				span.appendChild(document.createTextNode(source.substring(lastLastIndex)));
 				span.normalize();
 			}
-		//////	End air calcs
+		
 		}
-   
-		////// 	Begin add header block
-		//////	Begin add header for air
+	}//	End air functions
+		
+	var threeDigitCounter = 0; //this will be used to track how many regex matches we have in the document. We need to do this to negotiate around AJAX
+		
+	function countRegEx() { //This function steps though the document nodes and keeps track of the # of regex matches
+		threeDigitCounter = 0;
+		for (var cand = null, i = 0; (cand = candidates.snapshotItem(i)); i++) {
+			if (CodesRegex.test(cand.nodeValue)) {
+				threeDigitCounter = threeDigitCounter + 1;	
+			}
+		}
+	}
+
+	function threeDigitcheckNodes() { //This function does an innitial count of the regex matches in the document and then re-runs that count every 3 seconds until it finds 10 or more
+	// We need to find 10 or more reg ex matches so that we know that AJAX has loaded a list and that there aren't just one or two flukes
+	// The number 10 is arbitrary; more research may produce a more accurate number
+		countRegEx();
+		if (threeDigitCounter >= 10) {
+			doAirFunctions();
+		} else {
+			timeFunction();
+		}
+	}
+		
+	function timeFunction() // this function is the timer that does our recursive node check every 3 seconds
+	{
+		var t=setTimeout(threeDigitcheckNodes,3000);
+	}
+	
+	if(getHeaderId(href) != 'notair'){
+   		threeDigitcheckNodes();// this is where all the functions for checking the number of regex matches are called
 		if(codeFound == true){
 			addHeader(href);
 		}
-		
-		//////	End add header for air
-	
-		} else if(getHeaderIdCar(href) != 'notcar'){ // new loop for car directions
+	} else if(getHeaderIdCar(href) != 'notcar'){ // new loop for car directions
 			// write function look up origCarId origDestinId by href  getCarOrig(href);
 			// getElementByID etc for the origCarId
 			
@@ -319,19 +307,19 @@ function doMainFunction(){
 			addHeaderCar(href, carbon, milesCar, cookieSet);
 		}		
 	}
-	//////	End Insert Header Block
+	//	End Insert Header Block
 	
 } 
 
-//////	End doMainFunction
+//	End doMainFunction
 
 
 
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////
 
 // 	BEGIN FUNCTIONS, END MAIN SCRIPT
 
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////
 
 
 
@@ -349,10 +337,10 @@ document.body.insertBefore(logo, document.body.firstChild);
 */
 // end test code
 
-//////	Begin code to generate header
+//	Begin code to generate header
 function addHeader(href){
 
-	//////	Begin calcs for the Header
+	//	Begin calcs for the Header
 	
 	origin = GM_getValue("gmOrigin");
 	destinLast = GM_getValue("gmDestin");
@@ -436,7 +424,7 @@ function addHeader(href){
 		terra = 15000;
 	}
 	
-	//////	End calcs for header contents
+	//	End calcs for header contents
 
 /*	
 	var expand = document.getElementById("expand"); 	
@@ -444,17 +432,17 @@ function addHeader(href){
 	    // function code here
 	},true);
 */
-	//////	 Begin header HTML/CSS
+	//	 Begin header HTML/CSS
 	
 	realcostsExpand = readCookie("realcostsExpand");
 	if(realcostsExpand == "contract"){
-		addGlobalStyle("#rcWhole{display:none; position:fixed;}#containerHalf{display:block; position:fixed;}");
+		addGlobalStyle("#rcWhole{display:none; position:fixed;}#rc_container{display:block; position:fixed;}");
 	} else if (realcostsExpand == "expand"){
-		addGlobalStyle("#rcWhole{display:block; position:fixed;}#containerHalf{display:none; position:fixed; bottom:-3;}");
+		addGlobalStyle("#rcWhole{display:block; position:fixed;}#rc_container{display:none; position:fixed; bottom:-3;}");
 	}	
 	
-	//addGlobalStyle("");
-	addGlobalStyle(".tree{margin:0 0 0 0;float:left;width:17px;height:25px;}#whatToDo a{color:#fff;}.titleBar a{color:#fff;text-decoration:none;}.realcost {margin:0 0 7px 0;padding:0 0 0 0;font-size:12px;text-align:center;}.realcost a{color:#fff;font-weight:normal;}.realcost a:hover{color:#fff;text-decoration:none;}#containerHalf{position:fixed;bottom:0;margin:3px 0 3px 0;padding:10px 0 0 10px;width:100%;height:78px;background-color:#FF8B19;z-index:10000;}#co2{margin:0 0 0 0;padding:0 11px 0 0;float:left;width:120px;height:62px;border-right-width:5px;border-right-style:solid;border-right-color:#fff;}#co2_lbs{margin:0 28px 0 11px;padding:0 0 0 0;float:left;width:84px;height:62px;text-align:right;}#num{font-size:35px;color:#8E0303;font-weight:bold;letter-spacing:1.5px;}#image_caption_wrap{margin:0 0 0 0;padding:0 0 0 0;float:left;}.image_caption{margin:0 12px 0 0;padding:0 0 0 0;float:left;}.image_caption_last{margin:0 0 0 -5px;padding:0 0 0 0;float:left;width:118px;}#ex_container{margin:13px 0 0 0;padding:0 0 0 0;}#circle{margin:2px 5px 0 0;padding:0 0 0 0;float:left;}#expand{margin:0 0 0 0;padding:0 0 7px 0;font-weight:bold;font-size:15px;float:left;}#expand a{color:#fff; text-decoration:none;}#expand a:hover{color:#fff; text-decoration:none;}");
+	//Here is where the css for the header is stored:
+	addGlobalStyle("/* Start RC */body {padding-top: 30px !important;}#rc_container {overflow: hidden;position:fixed;top:0;width:100%;height:30px;z-index:10000;background-color:#eeeeee;text-align: center;clear: both;}/* Logo Css */#rc_logo {width:84.9px;height:30px;float:left;display:inline;margin-top: 3px;}#rc_logo_img {width:75px;margin-left:auto;margin-right:auto;}/* End Logo Css *//* Orange co2 section */#rc_co2 {width:301.6px;height:30px;background-color:#FF8B19;float:left;display:inline;text-align: center;}#center_co2 {display:inline-block;margin-left: auto;margin-right: auto;text-align: left;}.white_txt {font:16px helvetica,sans-serif;color:#ffffff;font-weight:bold;display: inline;line-height:200%;margin-right:5px;}.red_txt {font:16px helvetica,sans-serif;color:#8D191B;display: inline;font-weight:bold;line-height:200%;}/* End Orange co2 section *//* Begin white background elements*//* Begin tree yrs */#border_containerOne {margin-right: auto;margin-left: 20px;float:left;display:inline;text-align: center;}#center_tree {display:inline-block;text-align: left;}#tree_container {width:18px;float:left;display:inline;margin-top: 2px;margin-right:5px;}#rc_tree {width:100%;height:auto;}.green_txt {font:16px helvetica,sans-serif;color:#298F45;display:inline;line-height:200%}.bold_txt {font-weight:bold;display:inline;line-height:200%}/* End tree yrs *//* Begin small links */.orange_txt {line-height:300%  !important;font:10px helvetica,sans-serif;color:#FF8B19  !important;}.orange_txt a{text-decoration:none  !important;line-height:300%  !important;}/* End small links *//* Begin Offsets */#border_containerTwo {width: 126px;height: 30px;float:right;display:inline;border-right-width:1px;border-right-style:solid;border-right-color:#999999;border-left-width:1px;border-left-style:solid;border-left-color:#999999;}/* End Offsets *//* Begin Train/bus */#border_containerThree {width: 98px;float:right;display:inline;padding-right: 7px;}/* End Train/bus *//* End white background elements*//* End RC */");
 	
 	treeImg = '<div class="tree"><img src="data:image/gif;base64,R0lGODlhEQAZALMAAN72/HerEn2vHIi1L9XltZK8QrfTgefw1qTHYPP46s7hqszgpoa1LXmsFY+6PHqtGCH5BAAAAAAALAAAAAARABkAAARUEMhJq714HuOeM0emMEFZMspFCGYrEFVStHSRUAutLxSi0wjK4NcaUBpEU0OYLBknvmZwkmvyJrKkrbL6vS4jGiqzMYEyExOaol5L2m74Wu6u2+8RADs=" width="17" height="25" alt="tree"/></div>';
 		
@@ -465,36 +453,24 @@ function addHeader(href){
 	}  
 	apost ="'";
 	
-	//////	Begin generate html
+	//	Begin generate html
 
-	headerCode ='<div id="containerHalf"><div id="co2"><h1 style="margin:0 0 0 0;padding:0 0 0 0;font-size:28px;font-weight:bold;color:#fff;font-size:28px;font-weight:bold;">CO2 for this trip:</h1></div> <div id="co2_lbs"><span id="num">'+ air +' </span><h2 style="margin:0 0 0 0;padding:0 0 0 0;font-size:22px;color:#8E0303;font-weight:bold;">'+ massUnits +' CO2</h2></div> <div id="image_caption wrap"style="color:#fff;"><div class="image_caption"><p class="realcost"><a href="http://www.terrapass.com/flight/products.flight.'+ terra+'.php?flight_carbon='+ airPounds +'&flight_miles='+ distance +'"target="_blank"><img src="data:image/png;base64,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" width="147" height="47" border="0"></a></p><p class="realcost"><a href="http://www.terrapass.com/flight/products.flight.'+ terra+'.php?flight_carbon='+ airPounds +'&flight_miles='+ distance +'"target="_blank">offset this flight' + apost + 's carbon</a></p></div><div class="image_caption"><p class="realcost"><a href="http://www.cwrr.com/nmra/travelreg.html" target="_blank"><img src="data:image/png;base64,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" width="147" height="47" border="0"><p class="realcost">short trip: bus or train </a></p></div><div class="image_caption_last"><div id="logo"><p class="realcost"><a href="http://www.therealcosts.com/"><img src="data:image/png;base64,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" width="110" height="37" border="0"></a></p> </div><!--logo--><div id="ex_container"><div id="circle"><a href="javascript:expand();"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAP5JREFUeNpiYEAD////5wfieiC+/x8TrAdiewZ8AKjAH4jf/ycM9oMsw2ZA/H/SwHkUg4AcfWyq/n54/P/PoxNgjMtFyIbsx6bi19GJ/791q4AxHmDPBHIF0BwHBvJBAROFBoBAAAuQEEAW+bkymuHf41MYKr/3qMLZbOFLGJhlzeF8JgYqABZ0AWbtIAYmqC3/Hp+Eu4rFKheuhpFPGsOQCygCOsFw9u9jk+CGsFrl4XLIA5B3DgDxBwp8s4CJkZHxI5AxAZssyNlMsmZgjAN8QNELTcakAn9suZcUg+Lx5eR6Ajl5PzSVI7yNwyB+aEo2QPP/AWAYXkRXDxBgAKsQsN2KzHz/AAAAAElFTkSuQmCC" width="17" height="17" border="0"></a></div> <!--circle--><div id= "expand"><a href="javascript:expand();">expand box</a></div> </div><!--expand--></div><!-- img_caption_last--></div><!--end image_capt_wrap--></div> <!--container--><!-- START LARGE HEADER --><div id="rcWhole" style="width:700px;min-height:50px;z-index:1000;background-color:#FF8B19;color:#2E3F26;border-width:1px 1px 1px 1px;border-style:solid;border-color:#FF8B19;-moz-border-radius:11px;font-family:arial;"><p class="titleBar" id="leftTitle" style="display:inline;font-weight:bold;margin:2px 0 2px 0;text-align:left;padding:0 0 0 15px;">CO2 for this Trip by mode vs. other metrics</p><p class="titleBar" id="rightTitle" style="display:inline;font-weight:bold;text-align:right;padding:0 0 0 0;float:right;margin:-14px 0 0 0;z-index:100000;"><a href="javascript:contract();">Hide</a></p><div id="graph" class="collapse" style="width:680px;z-index:1000;height:156px;border-width:1px 1px 1px 1px;border-style:solid;border-color:#DEF6FC;-moz-border-radius-topleft:11px;-moz-border-radius-topright:11px;margin:0 8px 0 8px;background-color:#DEF6FC;"><div id="scale" style="background-image:url('+scale+');background-repeat:no-repeat;height:156px;width:50px;margin:0 9px 0 0;float:left;"></div><div class="barWrap" id="planeWrap" style="position:relative;bottom:0px;height:156px;width:60px;margin:0 9px 0 0;float:left;"><div class="bar" id="plane" style="height:'+ parseInt(airPounds*divisionFactor) +'px;width:60px;float:left;background-color:#BC0000;position:absolute;bottom:0px;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAASCAYAAAAg9DzcAAAABGdBTUEAANbY1E9YMgAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAJ5SURBVHjaYmEAgt0KqvYMuMEH1we3LzIMEsAIdewBAuoeAHEB0OEbB9zFIAcD8f9vjx//xwY+Xb32/0Zjy3+QGiD2HxTBDHTI+cPWDv+frl77/9fHj1gdDnX0ewLJh/ZJAupgfiA1AYgTBM3NGIxXLMGq+GpJOcPztetBzAaQemAS+QjVDwr5AqSkBUpCG2DyVHcwUkjrgyyVDA4U0O7pxKrh0bwFDPcmTGb48/nzByB3AchhII+y8PIm8GppgtW8P3kKpvwCVH4DtTIuI5bkAQqtDUr5uQxKBblYNf3+9Inh+Zp1DM+A+Mv1G3BxHk0NBvW6agZBC3OGV7t2M7w/cYrh9a49DD+ePgWXNlAPkAoeQGPzIlYHQx0dDwo9re4OBqmQILymgRz/5dp1hu9PnjL8eAJ2GINkSCADp4wMXM33J0/ADv/z6TPJrgV5HBooCUBHL8SXEftBJQMoIw40uFJcBs7wOEMYydHzQT7DlzzoAUAxdNTWCcR0YMKnEBgFiSAH35s4meFsRAxY40AApKT0gZmQ4sUf3l2MExDeAMw4HsCMJvDv5y8GDhlpBlY+PrqF7uXcQoZfb95cAAZgIyOJFUw9KMSBWAFUIoBKA5DDebQ0GMTcXHHq+wzMlO9PnCQq04HU/gFmZBiAFpEXoJnuIiM5vgY6HFR7BADLXga5pAQG2aR4jBAHWQwq9pCKtQdQTEwxhqzuAXLpwEJquwNaWSgAKxcGNWCZi+xQLGXvA2jFsYBaFQcLkQ7Vh1bdDiA+qPoG1Wqg8hdUDoMcCC5nP3+GRd8CaO32kKZVMxGhqwDFDkhsBmgbYgOtHEntlh4/Pe0DCDAA0uXSyccr0dcAAAAASUVORK5CYII=" width="44" height="18" id="planePic" class="pic" style="position:absolute;bottom:5px;left:10px;"></div></div><div class="barWrap" id="carWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><div class="bar" id="car" style="height:'+ parseInt(carPounds*divisionFactor) +'px;width:60px;float:left;background-color:#BC0000;position:absolute;bottom:0px;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAQCAYAAABk1z2tAAAABGdBTUEAANbY1E9YMgAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAKVSURBVHjaYmQgAuxWULVnoBC4Prh9kBx9jIQUHHVyO69SXmLAysdHtuN+f/rEcKO2YYH9qWOJVHUgMOTijZcvXvD9yVOGa6UVONUB1YDps5GxGHIsvLwMWj0dYPal9OwCYEhOJMWBTPgkuZQUCwQtzBnuTZhMduj9+fyZ4VpJBQOvliaDUn7uBFKTCwtSaOkDqQBkSZnoSAMQLRUShNcQDhlpMA10AE41n69dZ1AqyGX4cvv2ht3bGCbgMe4ARnoFOq7/4dz5/789fvx/IMGvjx//v9y56/9BE4v1KA68Ulz2fzCBp6vX/ofGKAMTiAFKZ4MJiLq5gKgEWBoU4ISmIeRi4fmadQzvjp+8wC4qosBvZChAKB2SCt6fOMnwYtOWDz9fv3nAp61lIBkSyMApIwOWAxVpEv6+AQwT+wpZsCXms1FxD/58/PgByAVlkgdPl6/88PHceQHNtmYBajjuelXtB5CZUK7Bmz17LzxasEjAeNkiBVBuBwE+PV0FYOzKg4qZByBHwcCljJwPQMcJAHOkgf3FM6AyToFHU0MBaOCDZ8BQpRSAzACZBTITZDbIDpBdIDsvZeU9wFpQH7Kw7ec3MkhgFxcXeDx/4QVBczMD4xVLUEL1pLf/Bz59vQ8iDvYKlDjwzYGDDz5dvCQAdJwActo/GxHD8P7kqQuyifEGDP/+PXi1c/cGuxOHC7HVHvV3+ydh5Cyg+H9qpT+QWegAZCfIbmJqkgugaABlFBh4NG8BiHpAxTxyAWomPFNCk88DoupioE/mc0hLJ4ByLkgzMNpBwg7ktkiwmA8q4w5IBgcKgHLuq127Gb5cv7EBaH4g0Y0FUEMBSMHS2wKg5ofULGZAORRW1oFCDmj+QmzqAAIMAL7tPbIEZLshAAAAAElFTkSuQmCC" width="40" height="16" id="carPic" class="pic" style="position:absolute;bottom:5px;left:10px;"></div></div><div class="barWrap" id="trainWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAAALCAYAAADWfWXXAAAABGdBTUEAANbY1E9YMgAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAFGSURBVHja1FXRTcMwEL1E/adMQDegGzRIDJANyAhlgnSEdgJgAjJApXYD0g2cCUgngHfinXRYLvw4SJz0ZL0nn33Pji+FIPYiTxgayR9HYMMxR4xAB6zvRc4mzmDggQYCYbFkUnBco7/AF8A84j56rjdnrnGNKsF9PZ5rrRXqrmHkJLyFV+ADuPE7gh+ANuKHH3ib4sCK66+of+PUUrxNcYy3wDvwBlypVtqpwNUg/yB4+g3rXqtWqEteYx/Nz/E5Bfcmcn1O4rQRpq7NxFSR+2Gnoiojd9k3mNiA2JuY0sT4Vya6CQ1oP7/DuJ3QQyixyQ4ooht5praMHzt1b7yjFv8X1MALO8pjlHO8kNNQ3/giVaM+RuurPsycWBNiJ6ftbP+lWRs+2WbW3tzcwc0NZsAX+EvO6HK2rpN10RurOXdn4qcAAwAwm40zqv0d2QAAAABJRU5ErkJggg==" width="49" height="11" id="trainPic" class="pic" style="position:absolute;bottom:10px;left:5px;"><div class="bar" id="train" style="height:'+ parseInt(trainPounds*divisionFactor) +'px;width:60px;float:left;background-color:#BC0000;position:absolute;bottom:0px;"></div></div><div class="barWrap" id="busWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAPCAYAAACWV43jAAAABGdBTUEAANbY1E9YMgAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAExSURBVHjazFbbDcIwDEyj/pMNYAPYgH4wACPABmxAR2ADRoABkCgbZANgg25Q7OqCgmWEQARiyWpr53E9O3YKQ3IwZkiPmnRh8pCWdD4z5lQSuDF9NKQOzgbPCgO9ssAE45s3fSOox9pBHOaxXDCGyToxezvSjnRLOggzYDtqv8d29n/gW2PdqeLrMHeI9zPbS6aSUROdyxxiSziuB7DIYK0Iay5yTzMbxf1vEqWWE3iq4lm+5HKarclbnH2RB+0PwWhp5kvFuI/qYkjWOiEwjz3jmrgKIS6Vv2DdCNsmmvRt1hpBQIvv3mYFtRqQUcJTvlfaqwPINhTqSdRmvGBPtiKXILyrJ/v1rbbQWhWcDyxyhU9UA7X9Kr4ohBBLmUdJe8Gt4prwkMj9FgEcy02AAQB5ml6H7QPSVwAAAABJRU5ErkJggg==" width="40" height="15" id="busPic" class="pic" style="position:absolute;bottom:5px;left:10px;"><div class="bar" id="bus" style="height:'+ parseInt(busPounds*divisionFactor) +'px;width:60px;float:left;background-color:#BC0000;position:absolute;bottom:0px;"></div></div><div class="barWrap" id="carYearWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><div class="bar" id="carYear" style="height:'+ parseInt(carYear*divisionFactor) +'px;background-color:#8E0303;width:60px;float:left;position:absolute;bottom:0px;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAZCAYAAABdEVzWAAAABGdBTUEAANbY1E9YMgAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAH1SURBVHja7FfRbcIwEHWq/pMNYAO6QdgANggb0A3CBtAJoBNQJqCdIHQC0gniTuCe4bm6Xm0nlEhFVZ90Skjs+N35+e5IVATGmCFdlupyLJMk2Z4zIYmQ6tGlgt1HvjElu4uMsY4NyEZE7vViF4lYbk4YNowryHYxB8lqshLOtsJN5J2NgL7US5r/bqOFqK7PiYz1aAWvfhs7svHRIbrZ0HWirgfaatISq+kmVdeFqSVm1PXhyUdMQ/gVImlFO+96YaQRt1NzrPNF/Bw10sRBCHLWocAXML7mDOnkEwon0qEAEYnQ83NhSYwDz3P2u0xY6bFh3WMrJZ6R4QcdnLhJQBojN8abOwP5bNOVuCKy6LctRTzMww6J9aSerJxaFXEamLHQrim0b10eSdTMKeRT0fcf1T/+KkIay7H3L7zvwlF+YGMGSCUjmV7cXHsK0f64eX3oy6E6lqBTe9TqOBfiucvWmf24SyNIvt8SssuPMh1gvsShiVQhP+7pRA+oAjUIFqFGQPR5C0Es4w43EePRKDzveTmZeZwxYtEa5DZorzixkpW5Uq51K9pgp4tQm7yld3uuGU9JsdhDgyk3p103BuVJ+xrVmx/WO90wJoXANWtttBD9GoTS1v8FQluJdzv+ryiwlSuuK6Y3w0peJg5Vztf5EGAAXR31YSLJun4AAAAASUVORK5CYII=" width="38" height="25" id="carYearPic" class="pic" style="position:absolute;bottom:5px;left:10px;"></div></div><div class="barWrap" id="usWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><div class="bar" id="us" style="height:'+ nationFootprint[0] +'px;background-color:#8E0303;width:60px;float:left;position:absolute;bottom:0px;"><img src="'+ nationFlag[0] +'" width="38" height="24" id="usPic" class="pic" style="position:absolute;bottom:5px;left:10px;" name="' +nationName[0]+ '" title="' +nationName[0]+ '"></div></div><div class="barWrap" id="euWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><div class="bar" id="eu" style="height:'+ nationFootprint[1] +'px;background-color:#8E0303;width:60px;float:left;position:absolute;bottom:0px;"><img src="'+ nationFlag[1] +'" width="38" height="24" id="euPic" class="pic" style="position:absolute;bottom:5px;left:10px;" name="' +nationName[1]+ '" title="' +nationName[1]+ '"></div></div><div class="barWrap" id="cnWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><div class="bar" id="cn" style="height:'+ nationFootprint[2] +'px;background-color:#8E0303;width:60px;float:left;position:absolute;bottom:0px;"><img src="'+ nationFlag[2] +'" width="38" height="24" id="cnPic" class="pic" style="position:absolute;bottom:5px;left:10px;" name="' +nationName[2]+ '" title="' +nationName[2]+ '"></div></div><div class="barWrap" id="worldWrap" style="height:156px;width:60px;margin:0 9px 0 0;position:relative;bottom:0px;float:left;"><div class="bar" id="world" style="height:'+ nationFootprint[3] +'px;background-color:#8E0303;width:60px;float:left;position:absolute;bottom:0px;"><img src="'+ nationFlag[3] +'" id="worldPic" class="pic" style="position:absolute;bottom:5px;left:10px;" name="' +nationName[3]+ '" title="' +nationName[3]+ '"></div></div></div><div id="whatToDo" class="collapse" style="width:680px;z-index:1000;height:80px;margin:10px 0 10px 8px;float:left;background-color:#FF8B19;color:#FFF;"><div class="whatWrap" style="height:80px;width:124px;margin:10px 10px 10px 0;float:left;"><img src="data:image/gif;base64,R0lGODlheAA8AMQAAP+oUv/ixf+SJ//38P+ZNf/w4v/p0/+gRP+2b/+vYP/TqP/Mmv/at/+9ff/FjP////+LGQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAB4ADwAAAX/ICSOZGmeaKqubOu+cCzPdG3feK7vfO//wKDwRAAYCaWiESAoLQEQwRI5rMYQj2ygFMhmGySCdwABeB28QwBqpYm9JW+WQcLOy2edYJFlt2cDXgcjZnJkI3xfeFloOV19fzQMXmAiiXKDIgaCiw+NOI8PfpEwDV4KI5tyD5UQciKFnhAEDQ4NmSYHtQ4OTCNSqqwAVCUHS01hU8W7CcgkxkZORriwXgYiAtZedJ1bnQ6Xc84QBwWrDwONsXKfJJcLJcG4CeaG7RChcVomck0JXgjqHTLFqFqWQOdQYUN47gGCTuyIeCkQZuIIOw0NOMtHwos3EqGgKPBCYGSWQZMg/0F8oMBBsAcjTD4owKvegy3r8pyQN4KgLIgDArzkhg9Ox30lHOSpR/GfIpuE5PixyUaBuQLIsmW5JiKkCowKIQSjEkoBMowPMnEc4dFELAZvWEbZFvdjLK4iZI6aNcJplhFeUwhAeCgu17gDxr3rapQtUhJa0WFMoOmg30+x4I1QqhIbggWhGgdOIZMyxocQ/IY1eJPx36OtTQQLhuxSygeUWbfjLApbuFUUXfdWEQvVbWS879UVri92id8P8PrtF7XgZi9swhlY4Pfj6BQCIxP1q7l67FDU2pqYnqV8ZGskYu3GPmsiMfVFO6fgfTt3J7wigCWcH7F8VNEqo4T2QP9535DAGxSZjbDcgCzENUYJDKEWhU2oheIfbwaSYNNr18nhX4Ml9hbLAIMQEMwhENzGQAMnnqDgahDwtiAAAVkkAm8GDKNjiDHJEWJOxKD4I30QMITOOSne8dUq1ETx0iosmteQcyWgdY8rPpo3n0rsoVOaCBZyiQJDwZUggIJZFFClTKc8QiSavPCSZIB5aognL6MAkCcxByhgQFAOCEBAnv4BwEABBQTgJwqhfEmIAgEMYAADCIxzUQAFbAoFArxMSkoQg5F06qo6tBjMnazGCgOce8lqqwu3ZYHjrbyu4JMBlvYq7LDEFmvsscj68MQOCNSYLA6v6KBUAFU+W0P/tDnwtoCn1sqALQ46DtBKt942Bu45BdQKAwGk2lKtCLow6ukSgwiQAC/OEldqE99icy+gL+ho5J4tCEBnnNQccKV1IniUgJMD5FvMSwOglZSTM0mc1JaMcCvYwgdlkuqWrYzRUGIqEIAxlNiAzPB+HB9kKgrhMKAAQ97wRpMDNn0EnAN0jmtCaC2NCJMlchgAqokrCLxlkCu8JzJDSCxwVVYXNrxNkS8nIRVg0VqooUxtouA0xwoQ3NcpJNSCQJXzQKV1FsQUmAJGRJETrU842vRulDEflOgJybEgwGdwOkZiNzB3HW1/z1GiwtmBa2RC4SpAh+23dputk+JHf5fj+OeEB56Q2pjTnDR3wYAeH36Xkw7ma6KnXrrpWqgrAt8kJBDAAg0QEFmWIsg9+9GswQoB7xJGa3uMTHpuesUrHDDGRl4k8NYvWR//+mO5XI9ItH6hzJr50sc8OAuhFICAoxdaH/IsL7lunvIQ2GSA9r+NYJO4AAhHsAC3Cri8QH4kK54hzoEMzsHOLaYbAQIz4jEHPU13KnhYQ8pTpgHcBjUOBN8J0KKrtZTBaOJggdPEVQMBNABUQVkA3AyFKEUx6kd5CkOfWFCoQ3EKAu36EgIYsIkAKACDG5PDtsjVKxCpjYmsUkoBNAbFVZGqiljMoha3yMUu6iAEADs=" width="120" height="60" id="whatTitlePic"></div><div class="whatWrap" id="busTrain" style="height:80px;width:124px;margin:10px 10px 10px 0;float:left;"><div class="whatIcon" style="height:35px;width:35px;float:left;"><img src="data:image/gif;base64,R0lGODlhIwAjAMQAAP/ixf+gRP/w4v+vYP/38P/TqP+ZNf+2b//at//p0/+9ff+SJ//Mmv+oUv/FjP+LGf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAjACMAAAX/4CMOTmmeaJoeohgIUCzPdG1DQvAs8O3/MsHjACz+SMZkrVQEOBSNqMIBKDJvhUEgyu0GBgXftdYQVW8AUeM2nhVaVIB8Lle0wkuHzfFQ+ft7emRrSVGBNoZJA4Q0bTKAPgh4EHyHNAQPDD4JInhvBHk1aWc2BAY8MaOhNAgPCZENAXhCCKszfKClLa4QmIK3vzJ8Bl1eu1sGkMBLu83Ou8ExjpTP1dC2wg8NDgPWIw5l0ZTiuDHJ1QYxvtjSDzI61QGP5ORDTt59ACz0zPjP/I38/WMHwck5PyZEGKBCMEYZdz/UsBHn8EG6HzoYNaIIIUGDWj8QNHhlSYlJbiZTFbLokbKIkAcvWgLJsesAwpt+uokIAQA7" width="35" height="35" class="whatIconPic"></div><div class="whatTitle" style="height:35px;width:85px;float:left;"><p class="what" style="font-size:17px;font-weight:bold;margin:0 0 0 0;padding:0 0 0 7px;line-height:1em;">Bus & Train</p></div><div class="whatLinks" style="width:124px;height:35px;float:left;"><p style="margin:5px 0 0 0;padding:0 0 0 0;font-size:9px;">Visit <a href="http://www.amtrak.com" target="_blank">Amtrak</a>, <a href="http://greyhound.com/home.asp" target="_blank">Greyhound</a>, or <a href="http://hopstop.com/" target="_blank">HopStop</a></p></div></div><div class="whatWrap" id="carpool" style="height:80px;width:124px;margin:10px 10px 10px 0;float:left;"><div class="whatIcon" style="height:35px;width:35px;float:left;"><img src="data:image/gif;base64,R0lGODlhIwAjAMQAAP+oUv+gRP/38P+ZNf+2b//Mmv+vYP/w4v/p0/+9ff+SJ//at//TqP/ixf/FjP+LGf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAjACMAAAX/4CMaTmmeaJoSohgcUCzPdG1DR/Ao8O3/ssODACz+CA6jslZaOmPNYmNhWjQExWhNwCAMWmDRwMDA2rQygUMRbocJ5hk6pnPbW4E4NDljPBwNgYKDhIEFfzRzLD1ODwCJfDIDCjELBgg+DnAxAA+QM0KPEF8GEA6MBQgIIgwxCQ8NcpEQDQ8JMQwBCAcKCzK9EAkAZoezaLUFEAhfAAsBycoACWtDMbXGs4exBm0x3GEFAgKIMmgOD76dYAOubpfke3J382DY8vT0peXGIoDf+Q3OOZIlL4CMOnfY0Rm4bwY3URAQ2lEIoRNEU7NePSjQoMAAAAMCAFAAUuTHAYAOU9kimEZiEkAVTcVKsmCdnjkI2OBzE4vlDAR1AhQixOKBLiazyokg8kMl009bCiTQc0Mq1XhPlszJ+sOBPq5FFoEFIsQoo7E0coBBoqKt2xJFH4QAADs=" width="35" height="35" class="whatIconPic"></div><div class="whatTitle" style="height:35px;width:85px;float:left;"><p class="what" style="font-size:17px;font-weight:bold;margin:0 0 0 0;padding:0 0 0 7px;line-height:1em;">Find a Carpool</p></div><div class="whatLinks" style="width:124px;height:35px;float:left;"><p style="margin:5px 0 0 0;padding:0 0 0 0;font-size:9px;">Visit <a href="http://www.carpoolconnect.com" target="_blank">Carpool Connect</a> or <a href="http://www.erideshare.com" target="_blank">eRideShare.com</a></p></div></div><div class="whatWrap" id="offsets" style="height:80px;width:124px;margin:10px 10px 10px 0;float:left;"><div class="whatIcon" style="height:35px;width:35px;float:left;"><img src="data:image/gif;base64,R0lGODlhIwAjAMQAAP+oUv+2b//w4v+SJ//at/+gRP/TqP/ixf+ZNf+9ff/p0//38P/Mmv+vYP/FjP+LGf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAjACMAAAXt4CMGTmmeaJoGolgIUCzPdG1DQvEM8O3/MsEjACz+SMZkraRsxphOJTRqnFKBVpvgYCgRHFKwjRAYtM6MZBZCQJzfokNVLGPB4QNAwtCzWe13bw0OCQB5ckt0B3cFAI4tRDMEjn1PdIABBAs2BjcGAwozUwA7oVQFCJuWMgwPAFcQpGmrMQsIBVcKZg0yVrqdnDYLZJC9dDECjgQ0gI4AOnCIEGsQB4Z6Dg2BcJG0WgaFZtvFosc+i+MIyzTUNq14mTftfl8OBgeVfuaw+vxY+/7KBfQxL2C2gTdY5EMo5MELhEGgjVBBsaIJQCEAADs=" width="35" height="35" class="whatIconPic"></div><div class="whatTitle" style="height:35px;width:85px;float:left;"><p class="what" style="font-size:17px;font-weight:bold;margin:0 0 0 0;padding:0 0 0 7px;line-height:1em;">Carbon Offsets?</p></div><div class="whatLinks" style="width:124px;height:35px;float:left;"><p style="margin:5px 0 0 0;padding:0 0 0 0;font-size:9px;"><a href="http://www.terrapass.com/flight/products.flight.'+ terra +'.php?flight_carbon='+ airPounds +'&flight_miles='+ distance +'" target="_blank">TerraPass</a>, <a href="http://www.carbonneutral.com/" target="_blank">CarbonNeutral</a>. <a href="http://www.tni.org/detail_pub.phtml?&know_id=56&menu=11c" target="_blank">Scientists are sceptical.</a></p></div></div><div class="whatWrap" id="moreInfo" style="height:80px;width:124px;margin:10px 10px 10px 0;float:left;"><div class="whatIcon" style="height:35px;width:35px;float:left;"><img src="data:image/gif;base64,R0lGODlhIwAjALMAAP/TqP/p0//at//38P+2b//w4v+ZNf+9ff+vYP+gRP/ixf+SJ/+oUv+LGf/FjP///yH5BAAAAAAALAAAAAAjACMAAAT/sEniqr04ZyJlKk8ojmRpPkXSLODpvmLREHD9UnZeVrVwMB3GQVDjuQAGCYPhWEoMgJexNAAyoiWAdXCajgKLBfYYDpi8oUGZFFCUwAsuCf1gLMwiQXIiD4EZOw4kAA1EIoQdHn0PAg1jIWgGgCJqDQgKAwALMyQMBnOCeY4jjQ19DiuDhSNeHHMNkyEHEiWcIl5LJAoOYwKbsSK5t6Ehli4DHCt4I0CsxA8NzySzsC2vziPGJ1YuCA3YwcCd0S7CkM+z5eQnDQfgIY2PXwrWqobnJJInbfXMn+8hCN1jtk6VPDp2lgUrKOJPICprasBZhO9NGHlZIoI6UQUWxgdaMWBRHPYCiRImThpAkSLNhA8gSoYUaamjCIKaODn0w+lCRoMPPGGkSERBg9GjFZI1iAAAOw==" width="35" height="35" class="whatIconPic"></div><div class="whatTitle" style="height:35px;width:85px;float:left;"><p class="what" style="font-size:17px;font-weight:bold;margin:0 0 0 0;padding:0 0 0 7px;line-height:1em;">More Info</p></div><div class="whatLinks" style="width:124px;height:35px;float:left;"><p style="margin:5px 0 0 0;padding:0 0 0 0;font-size:9px;">Want more info?<br/>visit the <a href="http://therealcosts.com/wiki/index.php?title=Main_Page" target="_blank">Real Costs Wiki</a></p></div></div></div><div id="forest" class="collapse" style="width:665px;z-index:1000;min-height:30px;border-width:1px 1px 1px 1px;border-style:solid;border-color:#DEF6FC;-moz-border-radius-bottomleft:11px;-moz-border-radius-bottomright:11px;padding:5px 5px 5px 10px;margin:0 8px 0 8px;float:left;background-color:#DEF6FC;">'+forest+'</div><p class="titleBar" id="bottom" style="font-weight:bold;margin:5px 0 2px 0;padding:0 0 0 15px;">'+trees+' Tree-years required to convert '+ air +' '+ massUnits +' CO2 into Oxygen</p></div>';
+	headerCode ='<div id="rc_container"><div id="rc_logo"><img id="rc_logo_img" alt="" src="data:image/png;base64,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" /></div><div id="rc_co2"><div id="center_co2"><p class="white_txt">CO2 for this trip:</p><p class="red_txt">'+ air + massUnits +' CO2</p></div></div><div id="border_containerOne"><div id="center_tree"><div id="tree_container"><img id="rc_tree" alt="" src="data:image/png;base64,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" /></div><p class="bold_txt green_txt">'+ trees +' Tree Years </p><p class="green_txt"> to convert back to oxygen</p></div></div><div id="border_containerThree"><p class="orange_txt">Take a <a class="orange_txt" href="http://www.amtrak.com/servlet/ContentServer?pagename=Amtrak/HomePage">Train</a> or <a class="orange_txt" href="http://www.greyhound.com/">Bus</a></p></div><div id="border_containerTwo"><p class="orange_txt"><a href="http://www.csmonitor.com/Environment/2010/0420/Buying-carbon-offsets-may-ease-eco-guilt-but-not-global-warming" class="orange_txt">Do Carbon Offsets work?</a></p></div></div>';
 	
-	//////	End generate html 
-	//////  End header HTML/CSS
-	//////	Begin finding location for/inserting header
+	//	End generate html 
+	//  End header HTML/CSS
+	//	Begin finding location for inserting header
 	
-	var target, header; //////	making two new variables to store hearder creation info
-   	header = document.createElement('div'); //////	setting var header as a new div element
-   	header.innerHTML = headerCode; //////	setting the inner html of the new div to previously generated header code
-   	
-    if(getHeaderId(href) != 'notair'){ //////	The header id is the name of the element before which the header will be inserted
-		targetId = getHeaderId(href); //////	pulling the info we want out of the headerid array and setting it to a variable we can use
-	}
-	if(isString(targetId)){ //////	checks to see if targetId has been set to a string value
-		target = document.getElementById(targetId); //////	if it has, sets var target to be the element of the document specified in the headerid array via targetid
-	} else {
-		mybody = document.getElementsByTagName("body")[0]; //////	if targetid is not a string, grabs th body tag of the doc and
-		target = mybody.getElementsByTagName("table")[targetId]; //////	sets the target as the number in the <table> specified in the headerid array
-	}
-	if (target) { ////// if target has been set up
-	   	target.parentNode.insertBefore(header, target); //////	inserts the html stored in the header var before the target var
-	}
+	var header; //	making variable to store hearder creation info
+   	header = document.createElement('div'); //	setting var header as a new div element
+   	header.innerHTML = headerCode; //	setting the inner html of the new div to previously generated header code
+	document.body.insertBefore(header, document.body.firstChild); //	inserts the html stored in the header var before the first element in the body tag
 	
-	//////	End insert header
+	//	End insert header
 }
 
-//////	end code to generate header
-//////	Begin car code
+//	end code to generate header
+//	Begin car code
 
 
 // CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR  CAR 
@@ -920,7 +896,7 @@ function getStartEndAddress(){
 
 }
 
-////// End Car Functions ?????????????????????????????
+// End Car Functions ?????????????????????????????
 
 
 // returns true if var is a string
@@ -930,7 +906,7 @@ function isString(a)
     return typeof a == 'string';
 }
 
-//////	Begin functions to deal with URLs
+//	Begin functions to deal with URLs
 
 function stripHref(href){
 	site = href.replace(".ca","");
@@ -955,43 +931,40 @@ function stripHref(href){
 
 
 // retreives the correct Id to insert before from an Array, keyed by URL
+// NOTE: THIS FUNCTION IS NO LONGER USED!
 function getHeaderId(href){
-	
-	site = stripHref(href); //////	formating the url into the form we want
+	site = stripHref(href); //	formating the url into the form we want
 	var headerId = new Object;
-  
-
 	// this is the array that contains the Element Id of the Element before which
 	// we will put in the Header.  for each site, add an Id
-	
-	//////	this is info hard coded from looking at the source code of these sites and acertaining where the header should go
-	headerId.aa="aa-lang-en"; //////	updated 1/16/12
+	//	this is info hard coded from looking at the source code of these sites and acertaining where the header should go
+	headerId.aa="aa-lang-en"; //	updated 1/16/12
 	headerId.alaskaair= "myAccount";
 	headerId.ata="pricingSpan";
 	headerId.ataairlines="pricingSpan";
 	headerId.bookaircanada="business";
 	headerId.continental= "ctl00_bodyMain";
-	headerId.delta="booking"; //////	updated 1/16/12
-	headerId.expedia="xp-hdr"; //////	updated 1/16/12
+	headerId.delta="booking"; //	updated 1/16/12
+	headerId.expedia="xp-hdr"; //	updated 1/16/12
 	headerId.bookjetblue="content";
 	headerId.flsdoubleclick="why am i getting an error on jet blue with this url";
 	//headerId.jetblueairways="header";
 	headerId.kayak="header";
 	//headerId.midwestairlines="Table18";
-	headerId.orbitz="resultsThreeColumn";  //////	updated 1/16/12
+	headerId.orbitz="resultsThreeColumn";  //	updated 1/16/12
 	headerId.travelcpriceline="skip";
 	headerId.resnwa="signInLink";
 	headerId.testtherealcosts="flightSummary";      
 	headerId.ticketsairtran="wrapper";
-	headerId.traveltravelocity= "bungee_v1";  //////	updated 1/19/12
-	headerId.travelunited="bodymain";  //////	updated 1/16/12
+	headerId.traveltravelocity= "bungee_v1";  //	updated 1/19/12
+	headerId.travelunited="bodymain";  //	updated 1/16/12
 	headerId.shoppingusairways="ctl00_MainBody";
 	headerId.cfares="cfareHomePage";
 	headerId.cheapoair="Body";
-	headerId.cheaptickets="bodyWrapper";  //////	updated 1/16/12
+	headerId.cheaptickets="bodyWrapper";  //	updated 1/16/12
 	headerId.suncountry=4;
 	headerId.booklufthansa="top";
-	headerId.flysaa="repricing"; //////	working in some way, complicated
+	headerId.flysaa="repricing"; //	working in some way, complicated
 	headerId.bookryanair=3;
 	//headerId.klm;
 	//headerId.flyemirates;
@@ -1122,87 +1095,85 @@ function getHeaderId(href){
 
 }
 
-//////	Begin testing URL
+//	Begin testing URL
 
 // checks to see if the site is valid 
 // an array of all valid sites
 
-function testIsValidURL(href){
-	//////	At this point, all sites need formatting help; testing for functionality, not layout
-	//////	CBL = Check Back Later
+function testIsValidURL(href){ // FOR CURRENT INFO ON FUNCTIONALITY, SEE LIST IN README. this information is out of date.
 	var validSites = new Array
-	validSites[0] = "aa.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
-	validSites[1] = "alaskaair.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
-	validSites[2] = "ata.com"; //////	compiles other sites CBL
-	validSites[3] = "ataairlines.com"; //////	compiles other sites CBL
-	validSites[4] = "bookaircanada.com"; //////	this site itself seems to not work CBL
-	validSites[5] = "continental.com"; //////	co2 (no problems) and header (font problem?)  timer needed aprox: 5 sec 1/27/12
-	validSites[6] = "delta.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 15 sec 1/27/12
-	validSites[7] = "expedia.com"; ////// co2 (Problem code 1) and header (font alignment?)	 timer needed aprox: 5 sec 1/27/12
-	validSites[8] = "book.jetblue.com"; //////	co2 (Problem code 2) and header (no problems)	 timer needed aprox: 5 sec 1/27/12
-	validSites[9] = "kayak.com"; //////	neither co2 or header 1/27/12
-	validSites[10] = "midwestairlines.com"; //////	site may be broken CBL
-	validSites[11] = "orbitz.com"; ////// co2 (no problem) and header (font?) timer needed aprox: 5 sec 1/27/12
-	validSites[12] = "travelc.priceline.com"; //////	co2 (Problem code: 3) and header (text alignment?) timer needed aprox: 5 sec 1/27/12
-	validSites[13] = "res.nwa.com"; //////	this is just delta
-	validSites[14] = "test.therealcosts.com"; //////	CBL
-	validSites[15] = "tickets.airtran.com"; //////	co2 (no problem) or header (some text weirness)  timer needed aprox: 5 sec 1/27/12
-	validSites[16] = "travel.travelocity.com"; ////// co2 (no problem) and header (no problem) timer needed aprox: 10 sec 1/27/12
-	validSites[17] = "travel.united.com"; ////// co2 (needs formating) and header (no problem)  timer needed aprox: 5 sec 1/27/12
-	validSites[18] = "shopping.usairways.com"; //////	co2 (no problem) and header (font)  timer needed aprox: 5 sec 1/27/12
-	validSites[19] = "cfares.com"; //////	co2 (no problem) and header (text alignment) timer needed aprox: 15 sec 1/27/12
-	validSites[20] = "cheapoair.com"; //////	co2 (Problem code 1) and header (font?) timer needed aprox: 10 sec 1/27/12
-	validSites[21] = "cheaptickets.com"; //////	co2 (no problem) and header (no problem) timer needed aprox: 15 sec 1/27/12
-	validSites[22] = "suncountry.com"; //////	no airport codes, neither co2 or header 1/19/12
-	validSites[23] = "book.lufthansa.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
-	validSites[24] = "flysaa.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
-	validSites[25] = "bookryanair.com"; //////	neither co2 or header (this site will need some extra attention) 1/19/12
-	validSites[26] = "book.cathaypacific.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
-	validSites[27] = "airberlin.com"; //////	header (text alignment) but no co2 (no three letter codes that can be edited) timer needed aprox: 5 sec 1/27/12
-	validSites[28] = "kenya-airways.com"; //////	neither co2 or header 1/19/12
-	validSites[29] = "airfrance.us"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
-	validSites[30] = "aswbeiana.com"; ////// I don't think this site exists anymore
-	validSites[31] = "virgin-atlantic.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
-	validSites[32] = "singaporeair.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
-	validSites[33] = "apps.hawaiianair.com"; //////	co2 (no problems) and header (needs a bottom margin) timer needed aprox: 5 sec 1/27/12
-	validSites[34] = "midwestairlines.com"; //////points to frontier airlines
-	validSites[35] = "southwest.com"; //////	some co2 no header 
-	validSites[36] = "quicktrip.com"; //////	neither co2 or header
-	validSites[37] = "booking.airasia.com"; //////	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
-	validSites[38] = "onlinebooking.philippineairlines.com"; //////	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
-	validSites[39] = "wftc3.e-travel.com"; //////	co2 (no problems) and header (font problem?)  timer needed aprox: 5 sec 1/27/12
+	validSites[0] = "aa.com"; //	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
+	validSites[1] = "alaskaair.com"; //	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[2] = "ata.com"; //	compiles other sites CBL
+	validSites[3] = "ataairlines.com"; //	compiles other sites CBL
+	validSites[4] = "bookaircanada.com"; //	this site itself seems to not work CBL
+	validSites[5] = "continental.com"; //	co2 (no problems) and header (font problem?)  timer needed aprox: 5 sec 1/27/12
+	validSites[6] = "delta.com"; //	header (no problems) and co2 (no problems) timer needed aprox: 15 sec 1/27/12
+	validSites[7] = "expedia.com"; // co2 (Problem code 1) and header (font alignment?)	 timer needed aprox: 5 sec 1/27/12
+	validSites[8] = "book.jetblue.com"; //	co2 (Problem code 2) and header (no problems)	 timer needed aprox: 5 sec 1/27/12
+	validSites[9] = "kayak.com"; //	neither co2 or header 1/27/12
+	validSites[10] = "midwestairlines.com"; //	site may be broken CBL
+	validSites[11] = "orbitz.com"; // co2 (no problem) and header (font?) timer needed aprox: 5 sec 1/27/12
+	validSites[12] = "travelb.priceline.com"; //	broken agin 2/15/12
+	validSites[13] = "res.nwa.com"; //	this is just delta
+	validSites[14] = "test.therealcosts.com"; //	CBL
+	validSites[15] = "tickets.airtran.com"; //	co2 (no problem) or header (some text weirness)  timer needed aprox: 5 sec 1/27/12
+	validSites[16] = "travel.travelocity.com"; // co2 (no problem) and header (no problem) timer needed aprox: 10 sec 1/27/12
+	validSites[17] = "travel.united.com"; // co2 (needs formating) and header (no problem)  timer needed aprox: 5 sec 1/27/12
+	validSites[18] = "shopping.usairways.com"; //	co2 (no problem) and header (font)  timer needed aprox: 5 sec 1/27/12
+	validSites[19] = "cfares.com"; //	co2 (no problem) and header (text alignment) timer needed aprox: 15 sec 1/27/12
+	validSites[20] = "cheapoair.com"; //	co2 (Problem code 1) and header (font?) timer needed aprox: 10 sec 1/27/12
+	validSites[21] = "cheaptickets.com"; //	co2 (no problem) and header (no problem) timer needed aprox: 15 sec 1/27/12
+	validSites[22] = "suncountry.com"; //	no airport codes, neither co2 or header 1/19/12
+	validSites[23] = "book.lufthansa.com"; //	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[24] = "flysaa.com"; //	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[25] = "bookryanair.com"; //	neither co2 or header (this site will need some extra attention) 1/19/12
+	validSites[26] = "book.cathaypacific.com"; //	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[27] = "airberlin.com"; //	header (text alignment) but no co2 (no three letter codes that can be edited) timer needed aprox: 5 sec 1/27/12
+	validSites[28] = "kenya-airways.com"; //	neither co2 or header 1/19/12
+	validSites[29] = "airfrance.us"; //	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[30] = "aswbeiana.com"; // I don't think this site exists anymore
+	validSites[31] = "virgin-atlantic.com"; //	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
+	validSites[32] = "singaporeair.com"; //	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[33] = "apps.hawaiianair.com"; //	co2 (no problems) and header (needs a bottom margin) timer needed aprox: 5 sec 1/27/12
+	validSites[34] = "midwestairlines.com"; //points to frontier airlines
+	validSites[35] = "southwest.com"; //	some co2 no header 
+	validSites[36] = "quicktrip.com"; //	neither co2 or header
+	validSites[37] = "booking.airasia.com"; //	header (no problems) and co2 (no problems) timer needed aprox: 5 sec 1/27/12
+	validSites[38] = "onlinebooking.philippineairlines.com"; //	co2 (no problems) and header (needs to be fixed) timer needed aprox: 5 sec 1/27/12
+	validSites[39] = "wftc3.e-travel.com"; //	co2 (no problems) and header (font problem?)  timer needed aprox: 5 sec 1/27/12
 	
-	//////	after this things did not work in the origional
+	//	after this things did not work in the origional
 	
-	validSites[40] = "fly.elal.co.il"; ////// CBL, something funny might be going on with the url
-	validSites[41] = "flyemirites.com"; ////// CBL, this site is weird
-	validSites[42] = "airberlin.com"; ////// repeat from line 1150
-	validSites[43] = "iberia.com"; //////	neither co2 or header
-	validSites[44] = "booking1.skyeurope.com"; ////// site seems to not exist anymore
-	validSites[45] = "book.qantas.com"; //////	neither co2 or header
-	validSites[46] = "flightbookings.airnewzealand.com"; //////	neither co2 or header
-	validSites[47] = "book.vaustralia.com"; //////	neither co2 or header
-	validSites[48] = "bookings.airniugini.com"; ////// site is offline
-	validSites[49] = "airpacific.com"; //////	neither co2 or header
-	validSites[50] = "ceair.com"; ////// CBL, chinese
-	validSites[51] = "book.malaysiaairlines.com"; //////	neither co2 or header
-	validSites[52] = "bookonline.saudiairlines.com"; //////	neither co2 or header
-	validSites[53] = "vedaleon.com"; ////// CBL, this site is weird
-	validSites[54] = "thy.com"; //////	neither co2 or header
-	validSites[55] = "secure.jetairways.com"; //////	neither co2 or header
-	validSites[56] = "indianairlines.com"; ////// site no longer online
-	validSites[57] = "vietnamairlines.com"; ////// CBL, something funny might be going on with the url
-	validSites[58] = "booking.sterlingticket.com"; ////// site no longer online
-	validSites[59] = "klm.com"; //////	neither co2 or header
-	validSites[60] = "flyemirates.com"; //////	neither co2 or header
-	validSites[61] = "wftc2.etravel.com"; //////	CBL, something funny might be going on with the url
-	validSites[62] = "wftc1.etravel.com"; //////	CBL, something funny might be going on with the url
-	validSites[63] = "tpeweb02.chinaairlines.com"; ////// site no longer online
-	validSites[64] = "bookings.gulfair.com"; //////	neither co2 or header
-	validSites[65] = "bookings.westjet.com"; //////	neither co2 or header
-	validSites[66] = "c3dsp.westjet.com"; //////	CBL, something funny might be going on with the url
-	validSites[67] = "travel.wwtel.com"; ////// compiles other sites CBL
-	validSites[68] = "wftc2.iceladairetravel.com"; ////// CBL check icelandair.is
+	validSites[40] = "fly.elal.co.il"; // CBL, something funny might be going on with the url
+	validSites[41] = "flyemirites.com"; // CBL, this site is weird
+	validSites[42] = "airberlin.com"; // repeat from line 1150
+	validSites[43] = "iberia.com"; //	neither co2 or header
+	validSites[44] = "booking1.skyeurope.com"; // site seems to not exist anymore
+	validSites[45] = "book.qantas.com"; //	neither co2 or header
+	validSites[46] = "flightbookings.airnewzealand.com"; //	neither co2 or header
+	validSites[47] = "book.vaustralia.com"; //	neither co2 or header
+	validSites[48] = "bookings.airniugini.com"; // site is offline
+	validSites[49] = "airpacific.com"; //	neither co2 or header
+	validSites[50] = "ceair.com"; // CBL, chinese
+	validSites[51] = "book.malaysiaairlines.com"; //	neither co2 or header
+	validSites[52] = "bookonline.saudiairlines.com"; //	neither co2 or header
+	validSites[53] = "vedaleon.com"; // CBL, this site is weird
+	validSites[54] = "thy.com"; //	neither co2 or header
+	validSites[55] = "secure.jetairways.com"; //	neither co2 or header
+	validSites[56] = "indianairlines.com"; // site no longer online
+	validSites[57] = "vietnamairlines.com"; // CBL, something funny might be going on with the url
+	validSites[58] = "booking.sterlingticket.com"; // site no longer online
+	validSites[59] = "klm.com"; //	neither co2 or header
+	validSites[60] = "flyemirates.com"; //	neither co2 or header
+	validSites[61] = "wftc2.etravel.com"; //	CBL, something funny might be going on with the url
+	validSites[62] = "wftc1.etravel.com"; //	CBL, something funny might be going on with the url
+	validSites[63] = "tpeweb02.chinaairlines.com"; // site no longer online
+	validSites[64] = "bookings.gulfair.com"; //	neither co2 or header
+	validSites[65] = "bookings.westjet.com"; //	neither co2 or header
+	validSites[66] = "c3dsp.westjet.com"; //	CBL, something funny might be going on with the url
+	validSites[67] = "travel.wwtel.com"; // compiles other sites CBL
+	validSites[68] = "wftc2.iceladairetravel.com"; // CBL check icelandair.is
 
 // these are the car sites
 	validSites[69] = "map.therealcosts.com";
@@ -1222,7 +1193,7 @@ function testIsValidURL(href){
 	return false
 }
 
-////// 	End testing URL
+// 	End testing URL
 
 // retreives the correct Id to insert before from an Array, keyed by URL
 function getHeaderIdCar(href){	
@@ -1254,9 +1225,9 @@ function getHeaderIdCar(href){
 
 }
 
-//////	End Functions for URLs
+//	End Functions for URLs
 
-////// Begin test to see if the code is in fact in the array for air
+// Begin test to see if the code is in fact in the array for air
 
 function doAir(originFound, code, span, href){
 	 
@@ -1275,14 +1246,14 @@ function doAir(originFound, code, span, href){
 				destin3 = code;
 			} 
 		
-			//////	I bet the problems are coming from the process of setting origin/destination, since the math after those variables are set should not have changed
+			//	I bet the problems are coming from the process of setting origin/destination, since the math after those variables are set should not have changed
 			if (originFound == false){
        			var origin = code;
 				GM_setValue("origin", origin);
 				if('start' == GM_getValue("gmOrigin")){
 					GM_setValue("gmOrigin", origin);
 				}
-      			originFound = true; //////	basically, it seems like the process is find a code > if there is no origin code set, then call the code the origin > if there is a origin code set, call the code the destination. 
+      			originFound = true; //	basically, it seems like the process is find a code > if there is no origin code set, then call the code the origin > if there is a origin code set, call the code the destination. 
      		} else if (originFound == true) {
       			var destin = code;
 				//onlyOneDestin = destin;
@@ -1294,7 +1265,7 @@ function doAir(originFound, code, span, href){
 				
 			
 				if (href == "jetblueairways.com"){
-					//////	I think this if clause is junk
+					//	I think this if clause is junk
 	            	var parenSpan = document.createElement("span");
     	        	parenSpan.appendChild(document.createTextNode(') '));
     	        	span.appendChild(parenSpan);
@@ -1331,9 +1302,9 @@ function doAir(originFound, code, span, href){
 
 }
 
-////// End code test
+// End code test
 
-//////	Begin add css to page
+//	Begin add css to page
 
 function addGlobalStyle(css) {
     var head, style;
@@ -1345,8 +1316,8 @@ function addGlobalStyle(css) {
     head.appendChild(style);
 }
 
-////// 	End add css
-//////	Begin add script to the head of the document
+// 	End add css
+//	Begin add script to the head of the document
 function addScript(scriptText){
 		var head = document.getElementsByTagName('head')[0];
 		if (!head) { return; }
@@ -1355,9 +1326,9 @@ function addScript(scriptText){
 		head.appendChild(addScript);
 }
 
-//////	End add script
-//////	Begin, I think, code to pop up new info either with a new version release or the first time the script is run
-//////	????????????????????????
+//	End add script
+//	Begin, I think, code to pop up new info either with a new version release or the first time the script is run
+//	????????????????????????
 
 function firstRun(version){
 
@@ -1387,7 +1358,7 @@ function closeFirstRun(){
 	document.getElementById('firstRun').style.display = 'none';
 }
 
-//////	End first run 
+//	End first run 
 
 
 function getUnits(){
@@ -1485,23 +1456,23 @@ function newdistance(lat1, lon1, lat2, lon2){
                             
 // end new distance calculator
 
-//////	Begin oil calcs
+//	Begin oil calcs
 
 
 
 
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////
 
 // 	BIG ARRAY OF NATIONAL CARBON FOOTPRINTS BELOW
 
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////
 
 //nations[1]="world#5.6#data:image/gif;base64,R0lGODlhGgAaAOYAAFV+eFt5bVd2dnVgO1N9fG5OT4gfIWZbXIQmKH0zNd7Vyq6WemduV45sRXhdNng4Punv756BYG9lRnJjQXtaMHRFQ7ahh3M8R1h7cqaMbXBFS9Pg4Obf18a1omxoTF52Z/b08b6rlYZiOMjY2GRwXNbKvHVBQquZgO7q5GFzYoaqqd7n587Ar6fBwX6gnL3Q0J2UfYKKeaichc7Tzaiuo8O4p9PNwpZ3UrixoG6Lgr2+stna1YBnQ31qSMjFumaAdPT393uiopGysYSHc12IhWWTkmlrUVKBfVCEg35YK////4wZGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAaABoAAAf/gEuCg4SFhoeICAkPDwkIiJAGBQJIlUdHSAIFBpCEFQRHAEgAmEYkH0gEJp1LB5WiSAwUKRJJSQyiB5AHRwGVSB5GGLK2SQOXuoYVSAMpv6FIGBPFSQ6iGoUGBEZJvr+V3NS3qZyDBQBJFN+VH+K2E5UFhALcPRsvSEEjSLUhFkkZSiioQSTTIARIHCRZsEJJkR9KhiQRASLDAhALInBYUenRkgRHbCmgMaPFBBY+jJxAkQTFAlsiGng4kkDQhQBJGihpsADCBxcgjNgIkURJhCQdFCjo9sAmTgtKFHBQEiMAhAVKcgCAcCLJDahMBYFMwqFDhAgKOiTBAWFDJSFAg2TAKKEkCU1BCHkoaGArA4sBDXao+KVixAYdDRwg8biEnrtaDNZVUmhEAKFz7mxRwLTOFgB5g7SFczfAWyUSSYwQKDdIA7PMtn5xG4BklSFeAzLDi2XsSLJDrkYXkxAtNZLfiD4BMKLQlodXBLCxWiKJUq8AmDSxno43wYVGjLmLNxQIADs=";
 //nations[2]="goal#4.7#data:image/gif;base64,R0lGODlhJgAYALMAAMKZqaFwgM91db9RUI4DA/fPzv///5SUtfCfngAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAmABgAAAR/kMhJq714hs2750IojqQoHWiqrinivnD8nmytynhM23bh/8Dgb8djGY7IpBJJLKqWUGXTiRJag1NqbovIOrk5b/FKLoh50bThbFNHJYC4fE6Xl68SsH6f3/vDBHeCgxJuhoeFh4pvgYOOeAR/kjqRk5YSA5mam5ydnp8ZoaIZEQA7"
 
 
 // function to return value for airport
-
+// Note: Three letter codes that are also day/month codes have been commented out. Later version may find work-arround.
 function getRandomNation(){
 
 var nations=new Array();
@@ -1614,11 +1585,11 @@ return(randomNation);
 }
 
 
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////
 
 // 	F'ING BIG MASSIVE ARRAY OF AIRPORTS BELOW, PLUS calcDistance
 
-/////////////////////////////////////////////////////////////////////////
+/////////////////////////
 
 
 // function to return value for airport
@@ -2064,7 +2035,7 @@ l.MUN="0.73:-63.15";
 l.CCS="10.6:-66.98";
 l.PMV="10.9:-63.95";
 l.MRD="0.56:-71.15";
-l.MAR="10.55:-71.7099";
+//l.MAR="10.55:-71.7099";
 l.LFR="0.23:-72.26";
 l.LSP="11.76:-70.15";
 l.GUQ="0.01:-69.75";
@@ -2102,7 +2073,7 @@ l.IQT="-3.78:-73.3";
 l.CHH="-6.2:-77.85";
 l.YMS="-5.88:-76.11";
 l.TBP="-3.55:-80.36";
-l.JUL="-15.46:-70.15";
+//l.JUL="-15.46:-70.15";
 l.JJI="-7.16:-76.7099";
 l.LIM="-12.01:-77.1";
 l.ATA="-0.33:-77.58";
@@ -2670,14 +2641,14 @@ l.IVC="-46.4:168.3";
 l.NSN="-41.28:173.21";
 l.NPL="-39:174.16";
 l.MRO="-40.96:175.63";
-l.TEU="-45.51:167.65";
+//l.TEU="-45.51:167.65";
 l.GTN="-43.75:170.13";
 l.ALR="-45.2:169.36";
 l.KAT="-35.06:173.28";
 l.KKE="-35.25:173.9";
 l.HLZ="-37.85:175.31";
 l.HKK="-42.7:170.98";
-l.MON="-43.9:170.11";
+//l.MON="-43.9:170.11";
 l.GIS="-38.65:177.96";
 l.DUD="-45.9099:170.18";
 l.CHT="-43.8:-176.45";
@@ -2995,7 +2966,7 @@ l.LJU="46.21:14.45";
 l.PEG="43.08:12.5";
 l.GRS="42.75:11.06";
 l.FLR="43.8:11.2";
-l.PSA="43.68:10.38";
+//l.PSA="43.68:10.38";
 l.NAP="40.88:14.28";
 l.QLT="41.53:12.9";
 l.EBA="42.75:10.23";
@@ -3627,7 +3598,7 @@ l.BCT="26.36:-80.1";
 l.BAD="32.5:-93.65";
 l.BAB="39.13:-121.43";
 l.AUS="30.18:-97.66";
-l.AUG="44.31:-69.78";
+//l.AUG="44.31:-69.78";
 l.ATL="33.63:-84.41";
 l.ART="43.9799:-76.01";
 l.ARA="30.03:91.88";
@@ -3863,7 +3834,7 @@ l.SPP="-14.65:17.71";
 l.MEG="-0.51:16.3";
 l.LAD="-0.85:13.21";
 l.SVP="-12.4:16.93";
-l.NOV="-12.8:15.75";
+//l.NOV="-12.8:15.75";
 l.NGV="-17.03:15.68";
 l.CAV="-11.88:22.9";
 l.PGI="-7.35:20.8";
@@ -4577,4 +4548,4 @@ l.GKA="-6.0599:145.38";
 return(eval('l.'+location));
 }
 
-//////	End oil calcs
+//	End oil calcs
