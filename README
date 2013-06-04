@@ -10,10 +10,6 @@ Carlo Montagnino
 Evan Moran
 Sara Kladky
 
-CURRENT STATE
-
-This plugin is being rebuilt for the latest version of Firefox.
-
 HISTORY
 
 The Real Costs is a Greasemonkey script compiled to xpi, and it stopped working with Firefox 2.0.0.3
